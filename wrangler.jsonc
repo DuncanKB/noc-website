@@ -1,0 +1,11 @@
+// Cloudflare Workers (static assets only): serves the built site from dist/.
+// /privacy is served from privacy.html; unknown paths get 404.html.
+{
+  "name": "noc-website",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
