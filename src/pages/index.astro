@@ -527,16 +527,31 @@ const RIDGE_BACK =
     gap: 12px;
   }
   @media (max-width: 760px) {
+    /* On phones the sun is placed from the top, just under the motto (whose
+       height follows the screen width), so it never rises into the words. */
+    .hero {
+      --sun-top: calc(65px + clamp(28px, 6vh, 80px) + 44px + 36.6vw + 28px);
+      --sun-size: min(56vw, 30svh, 280px);
+      min-height: max(100svh, 700px);
+    }
     .glow,
     .sun {
       left: 50%;
+      bottom: auto;
     }
     .sun {
-      width: min(64vw, 300px);
-      bottom: 33%;
+      top: var(--sun-top);
+      width: var(--sun-size);
+    }
+    /* Keep the sun's space free, so the text below never runs over it. */
+    .hero-content > div:first-child {
+      padding-bottom: calc(var(--sun-size) + 8px);
     }
     .glow {
-      bottom: 36%;
+      top: calc(var(--sun-top) + var(--sun-size) / 2);
+      width: 160vw;
+      height: 120vw;
+      translate: -50% -50%;
     }
     .ridge-back {
       height: 58%;
