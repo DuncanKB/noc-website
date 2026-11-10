@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { DISCORD, INSTAGRAM, INSTAGRAM_HANDLE } from '../links';
+import Waitlist from '../components/Waitlist.astro';
 
 const manifesto =
   'Most apps ask how fast you went. We ask something else: have you ever? NOC is not about being the fastest. It counts the things you have never done before, and finds you the people to do them with.';
@@ -206,6 +207,7 @@ const RIDGE_BACK =
           <li><span class="dot" aria-hidden="true"></span><b>Android</b><span class="label">Later</span></li>
           <li><span class="dot" aria-hidden="true"></span><b>NOC+</b><span class="label">Planned</span></li>
         </ul>
+        <div data-reveal style="--d: 0.3s"><Waitlist /></div>
       </div>
 
       <div class="phone-stage" aria-hidden="true" data-reveal style="--d: 0.1s">

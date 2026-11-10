@@ -1,0 +1,155 @@
+---
+// "Tell me when the app is out": one email field. Posts to /api/waitlist
+// (worker/index.ts). Works without JavaScript too (the server redirects back
+// with ?waitlist=ok / ?waitlist=error); with JavaScript it answers in place.
+const CONTACT = 'nevermadeofficial@gmail.com';
+---
+
+<form class="waitlist" action="/api/waitlist" method="post" data-waitlist novalidate>
+  <label class="label label-orange" for="waitlist-email">Get told first</label>
+  <div class="wl-row">
+    <input
+      id="waitlist-email"
+      name="email"
+      type="email"
+      inputmode="email"
+      autocomplete="email"
+      required
+      maxlength="254"
+      placeholder="you@example.com"
+      aria-describedby="waitlist-note waitlist-msg"
+    />
+    <!-- Bots fill every field; people never see this one. -->
+    <div class="wl-hp" aria-hidden="true">
+      <label for="waitlist-company">Company</label>
+      <input id="waitlist-company" name="company" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+    <button class="btn" type="submit">Notify me</button>
+  </div>
+  <p id="waitlist-msg" class="wl-msg" role="status" aria-live="polite"></p>
+  <p id="waitlist-note" class="wl-note">
+    One email when the app launches, nothing else. We only keep your address for that, never share or sell it, and
+    delete it on request: <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+  </p>
+</form>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-waitlist]');
+  const msg = form?.querySelector<HTMLElement>('.wl-msg');
+  const say = (text: string, ok: boolean) => {
+    if (!form || !msg) return;
+    msg.textContent = text;
+    form.classList.toggle('is-ok', ok);
+    form.classList.toggle('is-error', !ok);
+  };
+
+  // Result after a no-JavaScript submit.
+  const result = new URLSearchParams(location.search).get('waitlist');
+  if (result === 'ok') say('You’re on the list. See you at launch.', true);
+  if (result === 'invalid') say('That email doesn’t look right. Try again?', false);
+  if (result === 'error') say('Something went wrong. Please try again in a minute.', false);
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = form.querySelector<HTMLInputElement>('input[name=email]')!;
+    if (!input.checkValidity() || !input.value.trim()) {
+      say('That email doesn’t look right. Try again?', false);
+      input.focus();
+      return;
+    }
+    const button = form.querySelector<HTMLButtonElement>('button')!;
+    button.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { accept: 'application/json' },
+        body: new FormData(form),
+      });
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+      if (res.ok && data.ok) {
+        say('You’re on the list. See you at launch.', true);
+        form.reset();
+      } else if (data.error === 'invalid') {
+        say('That email doesn’t look right. Try again?', false);
+      } else {
+        say('Something went wrong. Please try again in a minute.', false);
+      }
+    } catch {
+      say('No connection. Please try again.', false);
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .waitlist {
+    margin-top: 36px;
+    max-width: 32rem;
+    display: grid;
+    gap: 12px;
+  }
+  .wl-row {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  input[type='email'] {
+    flex: 1 1 14rem;
+    min-width: 0;
+    min-height: 52px;
+    padding: 0 20px;
+    border-radius: 999px;
+    border: 1.5px solid #5a5a5a;
+    background: var(--surface);
+    color: var(--ice);
+    font: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+  }
+  input[type='email']::placeholder {
+    color: #8e9093;
+  }
+  input[type='email']:hover {
+    border-color: #777;
+  }
+  input[type='email']:focus-visible {
+    outline: none;
+    border-color: var(--orange);
+    box-shadow: 0 0 0 4px rgb(255 89 0 / 0.25);
+  }
+  .btn {
+    min-height: 52px;
+  }
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .wl-hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .wl-msg {
+    min-height: 1.5em;
+    font-weight: 500;
+  }
+  .is-ok .wl-msg {
+    color: #a6d13a;
+  }
+  .is-error .wl-msg {
+    color: #ff8a4d;
+  }
+  .wl-note {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--stone-text);
+  }
+  .wl-note a {
+    color: var(--ice);
+    text-underline-offset: 3px;
+  }
+</style>

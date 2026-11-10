@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "opentype.js": "^2.0.0",
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "wrangler": "^4.160.0"
   }
 }

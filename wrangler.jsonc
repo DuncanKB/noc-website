@@ -1,13 +1,26 @@
-// Cloudflare Workers (static assets only): serves the built site from dist/.
-// /privacy is served from privacy.html; unknown paths get 404.html.
+// Cloudflare Worker for nevermadeoutdoorclub.com.
+// Static site from dist/ (/privacy is served from privacy.html; unknown paths
+// get 404.html) plus a small script (worker/index.ts) for the waitlist and the
+// redirect from nevermadeoutdoorclub.com to www.
 {
   "name": "noc-website",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
   // Build the site before every deploy (Cloudflare's own build step may be skipped).
   "build": { "command": "npm run build" },
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
-  }
+    "not_found_handling": "404-page",
+    // The script runs first so it can redirect the address without www.
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "noc-waitlist",
+      "database_id": "3d64b7f7-03e1-48b1-b6c1-60cabaed633c"
+    }
+  ]
 }
