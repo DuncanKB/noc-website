@@ -1,0 +1,495 @@
+---
+import Base from '../layouts/Base.astro';
+import { DISCORD, INSTAGRAM, INSTAGRAM_HANDLE } from '../links';
+
+const firsts = [
+  { what: 'First summit', done: true },
+  { what: 'First trail run', done: true },
+  { what: 'First sunrise hike', done: false },
+  { what: 'First night outside', done: false },
+];
+
+const activities = [
+  { name: 'Hiking', line: 'First summit. First hut-to-hut. First sunrise from the top.' },
+  { name: 'Running', line: 'First 5K. First run in the rain. First run before work.' },
+  { name: 'Trail running', line: 'First muddy descent. First run with no road in sight.' },
+  { name: 'Cycling', line: 'First col. First gravel loop. First ride to the coast.' },
+  { name: 'Climbing', line: 'First outdoor crag. First lead. First multi-pitch.' },
+];
+---
+
+<Base
+  title="NEVERMADE OUTDOOR CLUB — Do the things you haven't done yet."
+  description="NEVERMADE OUTDOOR CLUB (NOC) is an outdoor app and community for chasing your firsts: first summit, first trail run, first sunrise hike, first night outside. Not about being the fastest."
+>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="label label-orange">NEVERMADE OUTDOOR CLUB · NOC</p>
+        <h1 id="hero-title" class="motto">
+          <span class="line">Do the things</span> <span class="line">you haven’t</span>
+          <span class="line accent">done yet.</span>
+        </h1>
+        <p class="lede">
+          An outdoor app and community for chasing your firsts. Not your fastest time, not your ranking: the
+          summit you've never stood on, the trail you've never run, the night you've never spent outside.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href={DISCORD} rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-5A8 8 0 1 1 21 12Z"></path></svg>
+            Join the Discord
+          </a>
+          <a class="btn btn-ghost" href={INSTAGRAM} rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.3" cy="6.7" r="0.6" fill="currentColor"></circle></svg>
+            Instagram
+          </a>
+        </div>
+      </div>
+      <div class="hero-badge">
+        <img
+          class="badge"
+          src="/club-badge.webp"
+          width="640"
+          height="640"
+          alt="The NEVERMADE OUTDOOR CLUB round badge"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section id="club" class="section" aria-labelledby="club-title">
+    <div class="wrap split">
+      <div>
+        <p class="label label-orange">(01) The club</p>
+        <h2 id="club-title" class="section-title">Not about being the fastest.</h2>
+        <div class="prose">
+          <p>
+            Most fitness apps count how fast you went and who you beat. NOC counts something else: the things
+            you've never done before.
+          </p>
+          <p>
+            Record your outings, keep a list of the firsts you're after, tick them off, and share them with
+            people who get why a first sunrise hike matters more than a personal best.
+          </p>
+        </div>
+      </div>
+      <figure class="log" aria-label="An example list of firsts">
+        <div class="log-head">
+          <span class="label">My firsts</span>
+          <span class="label">2 / 4</span>
+        </div>
+        <ul>
+          {
+            firsts.map((f) => (
+              <li class:list={['log-item', { done: f.done }]}>
+                <span class="check" aria-hidden="true">
+                  {f.done && (
+                    <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  )}
+                </span>
+                <span class="log-what">{f.what}</span>
+                <span class="label log-state">{f.done ? 'Done' : 'Next'}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <figcaption class="label">Your list. Your pace.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="activities" class="section section-alt" aria-labelledby="act-title">
+    <div class="wrap">
+      <p class="label label-orange">(02) Outside, your way</p>
+      <h2 id="act-title" class="section-title">Five ways to find a first.</h2>
+      <ol class="activities">
+        {
+          activities.map((a, i) => (
+            <li class="activity">
+              <span class="label">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{a.name}</h3>
+              <p>{a.line}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section id="app" class="section" aria-labelledby="app-title">
+    <div class="wrap split">
+      <div>
+        <p class="label label-orange">(03) The app</p>
+        <h2 id="app-title" class="section-title">Being built. Right now.</h2>
+        <div class="prose">
+          <p>
+            The NOC app is in the making: record outings with GPS, collect your firsts, follow friends and share
+            what you did. It's coming to iPhone first, with Android after that.
+          </p>
+          <p>
+            Later there will also be NOC+, an optional membership with extras. The details aren't final yet; the
+            Discord hears first.
+          </p>
+        </div>
+      </div>
+      <ul class="status" aria-label="Release status">
+        <li>
+          <span class="dot dot-live" aria-hidden="true"></span>
+          <span class="status-name">iPhone</span>
+          <span class="label">In development</span>
+        </li>
+        <li>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="status-name">Android</span>
+          <span class="label">Later</span>
+        </li>
+        <li>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="status-name">NOC+</span>
+          <span class="label">Planned</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="join" class="section join" aria-labelledby="join-title">
+    <div class="wrap">
+      <p class="label label-orange">(04) Join the club</p>
+      <h2 id="join-title" class="section-title join-title">Come along before the app does.</h2>
+      <p class="join-lede">
+        Swap plans, find people to go with, follow the app being built and help shape it.
+      </p>
+      <div class="join-cards">
+        <a class="join-card" href={DISCORD} rel="noopener">
+          <span class="label label-orange">Community</span>
+          <span class="join-name">Discord</span>
+          <span class="join-sub">Join the NOC server <span aria-hidden="true">→</span></span>
+        </a>
+        <a class="join-card" href={INSTAGRAM} rel="noopener">
+          <span class="label label-orange">Follow</span>
+          <span class="join-name">Instagram</span>
+          <span class="join-sub">{INSTAGRAM_HANDLE} <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .hero {
+    position: relative;
+    padding-block: clamp(40px, 8vw, 112px) clamp(56px, 9vw, 120px);
+    overflow: hidden;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(24px, 5vw, 64px);
+  }
+  .motto {
+    margin-top: 20px;
+    /* Sized so "DO THE THINGS" always fits on one line. */
+    font-size: min(7.4vw, 7.5rem);
+    line-height: 0.88;
+    text-wrap: initial;
+  }
+  .motto .line {
+    display: block;
+    white-space: nowrap;
+  }
+  @media (max-width: 860px) {
+    .motto {
+      font-size: min(13.5vw, 7.5rem);
+    }
+  }
+  .accent {
+    color: var(--orange);
+  }
+  .lede {
+    margin-top: 28px;
+    max-width: 34rem;
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+    color: var(--ice);
+    opacity: 0.88;
+  }
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .hero-badge {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+  }
+  /* Contour rings behind the badge, like a summit on a topo map. */
+  .hero-badge::before {
+    content: '';
+    position: absolute;
+    inset: -18%;
+    border-radius: 50%;
+    background: repeating-radial-gradient(circle, transparent 0 22px, var(--line) 22px 23px);
+    mask-image: radial-gradient(circle, #000 35%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle, #000 35%, transparent 70%);
+  }
+  .badge {
+    position: relative;
+    width: min(100%, 400px);
+    animation: turn 60s linear infinite;
+  }
+  @keyframes turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (max-width: 860px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-badge {
+      order: -1;
+      width: min(46vw, 230px);
+      justify-self: start;
+    }
+  }
+
+  /* Sections */
+  .section {
+    padding-block: clamp(64px, 10vw, 128px);
+    border-top: 1px solid var(--line);
+  }
+  .section-alt {
+    background: var(--surface);
+  }
+  .section-title {
+    margin-top: 16px;
+    font-size: clamp(2.6rem, 6.5vw, 5rem);
+  }
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(36px, 6vw, 88px);
+  }
+  @media (max-width: 860px) {
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+  .prose {
+    margin-top: 24px;
+    display: grid;
+    gap: 16px;
+    max-width: 36rem;
+    font-size: 1.08rem;
+  }
+
+  /* Firsts log */
+  .log {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 20px;
+  }
+  .log-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 4px 14px;
+  }
+  .log ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .log-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--raised);
+    border-radius: 12px;
+  }
+  .check {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--stone);
+    color: var(--page);
+  }
+  .check svg {
+    width: 16px;
+    height: 16px;
+  }
+  .done .check {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+  .log-what {
+    flex: 1;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.45rem;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .done .log-state {
+    color: var(--orange);
+  }
+  .log figcaption {
+    padding: 16px 4px 2px;
+  }
+
+  /* Activities */
+  .activities {
+    list-style: none;
+    margin: 44px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .activity {
+    background: var(--page);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 20px 24px;
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    transition: border-color 0.2s ease;
+  }
+  .activity:hover {
+    border-color: var(--orange);
+  }
+  .activity h3 {
+    font-size: 2.1rem;
+    margin-top: 18px;
+  }
+  .activity p {
+    color: var(--stone-text);
+    font-size: 0.95rem;
+  }
+  @media (max-width: 560px) {
+    .activity {
+      padding: 18px 18px 20px;
+      gap: 6px;
+    }
+    .activity h3 {
+      margin-top: 4px;
+    }
+  }
+
+  /* App status */
+  .status {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .status li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+  }
+  .status li + li {
+    border-top: 1px solid var(--line);
+  }
+  .status-name {
+    flex: 1;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.9rem;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .dot {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--stone);
+  }
+  .dot-live {
+    background: var(--moss);
+    border-color: var(--moss);
+    box-shadow: 0 0 0 0 rgb(115 153 18 / 0.6);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse {
+    70% {
+      box-shadow: 0 0 0 10px rgb(115 153 18 / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(115 153 18 / 0);
+    }
+  }
+
+  /* Join */
+  .join {
+    background: var(--orange);
+    color: var(--page);
+    border-top: 0;
+  }
+  .join .label-orange {
+    color: var(--page);
+  }
+  .join-title {
+    max-width: 14ch;
+  }
+  .join-lede {
+    margin-top: 20px;
+    max-width: 32rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+  }
+  .join-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 40px;
+  }
+  .join-card {
+    display: grid;
+    gap: 6px;
+    padding: 26px 26px 28px;
+    background: var(--page);
+    color: var(--ice);
+    border-radius: 20px;
+    text-decoration: none;
+    transition: transform 0.15s ease;
+  }
+  .join-card:hover {
+    transform: translateY(-3px);
+  }
+  .join-card .label-orange {
+    color: var(--orange);
+  }
+  .join-card:focus-visible {
+    outline-color: var(--page);
+  }
+  .join-name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 6vw, 3.6rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    margin-top: 8px;
+  }
+  .join-sub {
+    color: var(--stone-text);
+  }
+</style>

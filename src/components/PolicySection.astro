@@ -1,0 +1,50 @@
+---
+interface Props {
+  index: string;
+  title: string;
+}
+const { index, title } = Astro.props;
+---
+
+<section>
+  <p class="label label-orange">({index})</p>
+  <h2>{title}</h2>
+  <div class="body"><slot /></div>
+</section>
+
+<style>
+  section {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+  h2 {
+    margin-top: 10px;
+    font-size: 2rem;
+    line-height: 0.95;
+  }
+  .body {
+    margin-top: 14px;
+    display: grid;
+    gap: 12px;
+    font-size: 1rem;
+    color: rgb(235 236 238 / 0.88);
+  }
+  .body :global(ul) {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 8px;
+  }
+  .body :global(li::marker) {
+    color: var(--orange);
+  }
+  .body :global(strong) {
+    color: var(--ice);
+    font-weight: 600;
+  }
+  .body :global(a) {
+    color: var(--orange);
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere;
+  }
+</style>
