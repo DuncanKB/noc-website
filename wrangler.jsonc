@@ -3,6 +3,8 @@
 {
   "name": "noc-website",
   "compatibility_date": "2026-10-01",
+  // Build the site before every deploy (Cloudflare's own build step may be skipped).
+  "build": { "command": "npm run build" },
   "assets": {
     "directory": "./dist",
     "html_handling": "auto-trailing-slash",
