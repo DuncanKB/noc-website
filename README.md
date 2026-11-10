@@ -26,3 +26,14 @@ what the app does, update the date at the top when it changes, and never remove 
 Cloudflare Pages, connected to this GitHub repo: every push to `main` is published automatically.
 Build command `npm run build`, output folder `dist`. See the steps the site was set up with in
 the commit history / hand-over notes.
+
+## Waitlist (app-launch email)
+
+The "Get told first" form stores email addresses in a Cloudflare D1 database
+(`noc-waitlist`), via `worker/index.ts`. Only the address and the signup date
+are kept, and the form promises one email at launch, so use it for that only.
+
+- See or export the list: Cloudflare dashboard → Storage & databases → D1 →
+  `noc-waitlist` → Console: `SELECT email, created_at FROM waitlist ORDER BY created_at;`
+- Delete someone on request: `DELETE FROM waitlist WHERE email = 'their@address';`
+- Same from a terminal: `npx wrangler d1 execute noc-waitlist --remote --command "…"`
