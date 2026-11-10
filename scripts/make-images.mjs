@@ -89,3 +89,10 @@ await sharp(Buffer.from(ogSvg))
   .toFile(file('public/og.png'));
 
 console.log('images written to public/');
+
+// The hero "sun": the badge in molten orange, rising behind the ridges.
+const sunBadge = await badge.clone().resize(640, 640).toBuffer();
+await sharp({ create: { width: 640, height: 640, channels: 4, background: ORANGE } })
+  .composite([{ input: sunBadge, blend: 'dest-in' }])
+  .webp({ quality: 88 })
+  .toFile(file('public/club-badge-sun.webp'));

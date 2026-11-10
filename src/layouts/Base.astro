@@ -26,6 +26,7 @@ const ogImage = new URL('/og.png', site).href;
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>document.documentElement.classList.add("js");</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -55,5 +56,24 @@ const ogImage = new URL('/og.png', site).href;
       <slot />
     </main>
     <Footer />
+    <script>
+      // Header turns solid after the first screen; [data-reveal] elements fade up into view.
+      const header = document.querySelector('.site-header');
+      const onScroll = () => header?.classList.toggle('scrolled', scrollY > 40);
+      onScroll();
+      addEventListener('scroll', onScroll, { passive: true });
+
+      const io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          }),
+        { rootMargin: '0px 0px -10% 0px' },
+      );
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+    </script>
   </body>
 </html>
