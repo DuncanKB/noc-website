@@ -3,9 +3,9 @@
 // must match the app and the privacy policy (/privacy); when either changes,
 // check this page too.
 import Base from '../layouts/Base.astro';
-import { DISCORD, INSTAGRAM, INSTAGRAM_HANDLE } from '../links';
+import { CONTACT_EMAIL, DISCORD, INSTAGRAM, INSTAGRAM_HANDLE } from '../links';
 
-const CONTACT = 'nevermadeofficial@gmail.com';
+const CONTACT = CONTACT_EMAIL;
 
 const faqs = [
   {
@@ -170,7 +170,7 @@ const faqs = [
   /* An email address reads (and copies) better in its own case. */
   .primary .contact-main {
     /* Sized to fit on one line down to 360px wide. */
-    font-size: min(2.6rem, 6.8vw);
+    font-size: min(2.6rem, 6.1vw);
     overflow-wrap: normal;
     white-space: nowrap;
     text-transform: none;

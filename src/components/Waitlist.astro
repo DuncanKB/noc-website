@@ -1,8 +1,9 @@
 ---
+import { CONTACT_EMAIL } from '../links';
 // "Tell me when the app is out": one email field. Posts to /api/waitlist
 // (worker/index.ts). Works without JavaScript too (the server redirects back
 // with ?waitlist=ok / ?waitlist=error); with JavaScript it answers in place.
-const CONTACT = 'nevermadeofficial@gmail.com';
+const CONTACT = CONTACT_EMAIL;
 ---
 
 <form class="waitlist" action="/api/waitlist" method="post" data-waitlist novalidate>
