@@ -53,8 +53,7 @@ function text(f, str, x, y, size, fill, { anchor = 'start', tracking = 0 } = {})
 
 const badge = sharp(file('scripts/club-badge-source.png'));
 
-// Hero badge: white, 640px (shown at up to 320px).
-await badge.clone().resize(640, 640).webp({ quality: 90 }).toFile(file('public/club-badge.webp'));
+// Badge PNG, white, 640px.
 await badge.clone().resize(640, 640).png().toFile(file('public/club-badge.png'));
 
 // Favicon: "NOC" on a molten orange disc.
@@ -94,5 +93,8 @@ console.log('images written to public/');
 const sunBadge = await badge.clone().resize(640, 640).toBuffer();
 await sharp({ create: { width: 640, height: 640, channels: 4, background: ORANGE } })
   .composite([{ input: sunBadge, blend: 'dest-in' }])
-  .webp({ quality: 88 })
+  .webp({ quality: 78 })
   .toFile(file('public/club-badge-sun.webp'));
+
+// Small badge for the header (shown at 40px).
+await badge.clone().resize(96, 96).webp({ quality: 90 }).toFile(file('public/club-badge-96.webp'));

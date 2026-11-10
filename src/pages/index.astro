@@ -52,7 +52,7 @@ const RIDGE_BACK =
             </linearGradient>
           </defs>
           <path fill="url(#backfill)" d={`M0 400 ${RIDGE_BACK} L1440 400Z`}></path>
-          <path fill="none" stroke="url(#rim)" stroke-width="1.6" d={`M${RIDGE_BACK.slice(2)}`}></path>
+          <path fill="none" stroke="url(#rim)" stroke-width="1.6" d={`M${RIDGE_BACK.slice(1)}`}></path>
         </svg>
       </div>
       <div class="layer" style="--depth: 0.16">
@@ -563,7 +563,8 @@ const RIDGE_BACK =
     max-width: 22ch;
   }
   .w {
-    color: #4d4d4d;
+    /* Dimmed until read, but still 3:1 against the page (large text). */
+    color: #737373;
     transition: color 0.35s ease;
   }
   .w.lit {
@@ -766,7 +767,7 @@ const RIDGE_BACK =
     font-size: clamp(3rem, 9vw, 7.5rem);
     line-height: 1;
     color: transparent;
-    -webkit-text-stroke: 1.5px #5c5c5c;
+    -webkit-text-stroke: 1.5px #7a7a7a;
     padding-inline: 0.25em;
   }
   .marquee-set i {
