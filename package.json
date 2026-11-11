@@ -7,7 +7,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "images": "node scripts/make-images.mjs",
-    "screens": "node scripts/make-screens.mjs"
+    "screens": "node scripts/make-screens.mjs",
+    "waitlist:export": "node scripts/waitlist.mjs export",
+    "waitlist:delete": "node scripts/waitlist.mjs delete"
   },
   "dependencies": {
     "@fontsource/barlow-condensed": "^5.3.0",

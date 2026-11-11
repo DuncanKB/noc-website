@@ -7,3 +7,9 @@ dist/
 
 # Original app screenshots (the optimised copies are in public/app/)
 screens-src/
+
+# Local secrets for wrangler dev
+.dev.vars
+
+# Waitlist exports: email addresses, never commit
+waitlist-export/

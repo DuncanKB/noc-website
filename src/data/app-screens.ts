@@ -27,7 +27,7 @@ export const APP_SCREENS: AppScreen[] = [
     file: '3-explore.webp',
     title: 'Explore',
     caption: 'Find a place to get outside',
-    alt: 'The Explore screen: search nearby by activity (walk, run, hike, ride) and distance, and curated routes around Amsterdam.',
+    alt: 'The Explore screen: search nearby by activity (walk, run, hike, ride) and distance, and NOC’s curated routes.',
   },
   {
     file: '4-go.webp',
