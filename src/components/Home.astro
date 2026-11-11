@@ -1,0 +1,1073 @@
+---
+// The home page, in English (src/pages/index.astro → /) and Dutch
+// (src/pages/nl/index.astro → /nl). All its words are in COPY below; keep the
+// two languages saying the same thing.
+import Base from '../layouts/Base.astro';
+import { DISCORD, INSTAGRAM, INSTAGRAM_HANDLE } from '../links';
+import type { Lang } from '../i18n';
+import Waitlist from './Waitlist.astro';
+import AppShowcase from './AppShowcase.astro';
+import ContourBackdrop from './ContourBackdrop.astro';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const COPY = {
+  en: {
+    title: 'NEVERMADE OUTDOOR CLUB — Do the things you haven’t done yet.',
+    description:
+      'NEVERMADE OUTDOOR CLUB (NOC) is an outdoor app and community for chasing your firsts: first summit, first trail run, first sunrise hike, first night outside. Not about being the fastest.',
+    motto: ['Do the things', 'you haven’t', 'done yet.'],
+    lede: 'An outdoor app and community for chasing your firsts: the summit you’ve never stood on, the trail you’ve never run, the night you’ve never spent outside.',
+    cta: 'Get the app first',
+    discord: 'Join the Discord',
+    ideaAria: 'What NOC is',
+    idea: '(01) The idea',
+    manifesto:
+      'Ever slept under the stars? Stood on a summit at sunrise? NOC counts the things you’ve never done before, and finds you the people to do them with.',
+    hot: ['stars?', 'sunrise?', 'never'],
+    firstsLabel: '(02) The firsts',
+    firstsTitle: 'Every first is a checkpoint.',
+    firsts: [
+      { tag: 'Up', title: 'First summit', line: 'The one where the view finally explains the climb.' },
+      { tag: 'Off-road', title: 'First trail run', line: 'Roots, mud, no splits worth mentioning. Worth it anyway.' },
+      { tag: 'Before dawn', title: 'First sunrise hike', line: 'Alarm at half four. Headtorch on. Colour at the top.' },
+      { tag: 'No roof', title: 'First night outside', line: 'Every sound twice as loud. The morning feels earned.' },
+    ],
+    actLabel: '(03) Outside, your way',
+    actTitle: 'Five ways to find a first.',
+    activities: [
+      { name: 'Hiking', line: 'First summit. First hut-to-hut. First sunrise from the top.' },
+      { name: 'Running', line: 'First 5K. First run in the rain. First run before work.' },
+      { name: 'Trail running', line: 'First muddy descent. First run with no road in sight.' },
+      { name: 'Cycling', line: 'First col. First gravel loop. First ride to the coast.' },
+      { name: 'Climbing', line: 'First outdoor crag. First lead. First multi-pitch.' },
+    ],
+    appLabel: '(04) The app',
+    appTitle: 'iPhone first. Android next.',
+    appText:
+      'Record outings with GPS, collect your firsts, follow friends and share what you did. The iPhone app is in development now. Later there will also be NOC+, an optional membership with extras; the details aren’t final yet, and the Discord hears first.',
+    statusAria: 'Release status',
+    status: ['In development', 'Later', 'Planned'],
+    joinLabel: '(05) Join the club',
+    join: ['Come along', 'before the', 'app does.'],
+    joinLede: 'Swap plans, find people to go with, follow the app being built and help shape it.',
+    community: 'Community',
+    discordSub: 'Join the NOC server',
+    follow: 'Follow',
+  },
+  nl: {
+    title: 'NEVERMADE OUTDOOR CLUB — Doe wat je nog nooit hebt gedaan.',
+    description:
+      'NEVERMADE OUTDOOR CLUB (NOC) is een outdoor-app en community voor je eerste keren: je eerste top, eerste trailrun, eerste zonsopgangtocht, eerste nacht buiten. Niet om wie het snelst is.',
+    motto: ['Doe wat je', 'nog nooit', 'hebt gedaan.'],
+    lede: 'Een outdoor-app en community voor je eerste keren: de top waar je nooit op stond, het pad dat je nooit liep, de nacht die je nooit buiten doorbracht.',
+    cta: 'Krijg de app als eerste',
+    discord: 'Kom in de Discord',
+    ideaAria: 'Wat NOC is',
+    idea: '(01) Het idee',
+    manifesto:
+      'Ooit onder de sterren geslapen? Bij zonsopgang op een top gestaan? NOC telt de dingen die je nog nooit hebt gedaan, en vindt de mensen om ze mee te doen.',
+    hot: ['sterren', 'zonsopgang', 'nooit'],
+    firstsLabel: '(02) De eerste keren',
+    firstsTitle: 'Elke eerste keer is een checkpoint.',
+    firsts: [
+      { tag: 'Omhoog', title: 'Eerste top', line: 'Die ene waar het uitzicht eindelijk de klim verklaart.' },
+      { tag: 'Onverhard', title: 'Eerste trailrun', line: 'Wortels, modder, geen tijden om over op te scheppen. Toch de moeite waard.' },
+      { tag: 'Voor dag en dauw', title: 'Eerste zonsopgangtocht', line: 'Wekker om half vijf. Hoofdlamp aan. Kleur op de top.' },
+      { tag: 'Geen dak', title: 'Eerste nacht buiten', line: 'Elk geluid twee keer zo hard. De ochtend voelt verdiend.' },
+    ],
+    actLabel: '(03) Buiten, op jouw manier',
+    actTitle: 'Vijf manieren om een eerste keer te vinden.',
+    activities: [
+      { name: 'Hiken', line: 'Eerste top. Eerste huttentocht. Eerste zonsopgang vanaf de top.' },
+      { name: 'Hardlopen', line: 'Eerste 5K. Eerste rondje in de regen. Eerste run voor werk.' },
+      { name: 'Trailrunning', line: 'Eerste modderige afdaling. Eerste run zonder weg in zicht.' },
+      { name: 'Fietsen', line: 'Eerste col. Eerste gravelrondje. Eerste rit naar de kust.' },
+      { name: 'Klimmen', line: 'Eerste buitenrots. Eerste voorklim. Eerste multipitch.' },
+    ],
+    appLabel: '(04) De app',
+    appTitle: 'Eerst iPhone. Dan Android.',
+    appText:
+      'Leg je tochten vast met gps, verzamel je eerste keren, volg vrienden en deel wat je hebt gedaan. De iPhone-app wordt nu gebouwd. Later komt er ook NOC+, een optioneel lidmaatschap met extra’s; de details staan nog niet vast, en de Discord hoort het als eerste.',
+    statusAria: 'Status van de release',
+    status: ['In ontwikkeling', 'Later', 'Gepland'],
+    joinLabel: '(05) Word lid',
+    join: ['Kom mee', 'voordat de', 'app er is.'],
+    joinLede: 'Wissel plannen uit, vind mensen om mee op pad te gaan, volg hoe de app gebouwd wordt en denk mee.',
+    community: 'Community',
+    discordSub: 'Kom in de NOC-server',
+    follow: 'Volg',
+  },
+};
+const c = COPY[lang];
+const { manifesto, firsts, activities } = c;
+
+// The elevation profile the firsts story draws along (viewBox 0 0 1000 300).
+const PROFILE =
+  'M0 250 C60 245 90 230 130 205 S200 120 250 95 S300 130 340 160 S420 200 470 175 S540 90 600 70 S660 110 700 150 S760 210 820 190 S900 120 940 110 S980 120 1000 125';
+const RIDGE_BACK =
+  'L0 230 L90 190 L170 215 L260 150 L330 175 L420 110 L500 160 L590 130 L680 185 L760 120 L850 60 L930 120 L1010 95 L1100 160 L1190 120 L1280 170 L1360 140 L1440 175';
+---
+
+<Base title={c.title} description={c.description} lang={lang} translated>
+  <!-- Hero: a sunrise over volcanic ridges -->
+  <section class="hero" aria-labelledby="hero-title" data-hero>
+    <div class="sky" aria-hidden="true">
+      <div class="layer" style="--depth: 0.12"><div class="glow"></div></div>
+      <div class="layer" style="--depth: 0.5">
+        <div class="sun"><img src="/club-badge-sun.webp" alt="" width="640" height="640" fetchpriority="high" /></div>
+      </div>
+      <div class="layer" style="--depth: 0.28">
+        <svg class="ridge ridge-back" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
+          <defs>
+            <linearGradient id="rim" x1="0" x2="1">
+              <stop offset="0" style="stop-color: var(--orange)" stop-opacity="0.1"></stop>
+              <stop offset="0.6" style="stop-color: var(--orange)" stop-opacity="0.95"></stop>
+              <stop offset="1" style="stop-color: var(--orange)" stop-opacity="0.1"></stop>
+            </linearGradient>
+            <linearGradient id="backfill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" style="stop-color: var(--ridge-lit)"></stop>
+              <stop offset="0.6" style="stop-color: var(--ridge-back)"></stop>
+            </linearGradient>
+          </defs>
+          <path fill="url(#backfill)" d={`M0 400 ${RIDGE_BACK} L1440 400Z`}></path>
+          <path fill="none" stroke="url(#rim)" stroke-width="1.6" d={`M${RIDGE_BACK.slice(1)}`}></path>
+        </svg>
+      </div>
+      <div class="layer" style="--depth: 0.16">
+        <svg class="ridge ridge-mid" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
+          <path
+            style="fill: var(--ridge-mid)"
+            d="M0 400 L0 290 L120 250 L210 280 L320 220 L430 270 L540 235 L650 290 L760 240 L880 280 L990 225 L1110 275 L1220 245 L1330 285 L1440 255 L1440 400Z"
+          ></path>
+        </svg>
+      </div>
+      <svg class="ridge ridge-front" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
+        <path
+          style="fill: var(--page)"
+          d="M0 400 L0 340 L160 310 L300 345 L460 300 L620 340 L800 315 L980 350 L1150 310 L1300 335 L1440 315 L1440 400Z"
+        ></path>
+      </svg>
+    </div>
+
+    <div class="wrap hero-content">
+      <div>
+        <h1 id="hero-title" class="motto">
+          <span class="line"><span style="--i: 0">{c.motto[0]}</span></span>
+          <span class="line"><span style="--i: 1">{c.motto[1]}</span></span>
+          <span class="line"><span class="accent" style="--i: 2">{c.motto[2]}</span></span>
+        </h1>
+      </div>
+      <div class="hero-foot">
+        <p class="lede">{c.lede}</p>
+        <div class="cta-row">
+          <a class="btn" href="#waitlist">{c.cta}</a>
+          <a class="btn btn-ghost" href={DISCORD} rel="noopener">{c.discord}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Manifesto: words light up as you read -->
+  <section class="manifesto" aria-label={c.ideaAria} data-manifesto>
+    <div class="wrap">
+      <p class="label label-orange">{c.idea}</p>
+      <p class="manifesto-text">
+        {
+          manifesto.split(' ').map((w) => (
+            <>
+              <span class:list={['w', { hot: c.hot.includes(w) }]}>{w}</span>{' '}
+            </>
+          ))
+        }
+      </p>
+    </div>
+  </section>
+
+  <!-- The firsts story: a route drawn along an elevation profile -->
+  <section id="story" class="story" aria-labelledby="story-title" data-story>
+    <div class="story-pin">
+      <div class="wrap story-inner">
+        <div class="story-head">
+          <p class="label label-orange">{c.firstsLabel}</p>
+          <h2 id="story-title" class="story-title">{c.firstsTitle}</h2>
+        </div>
+
+        <svg class="profile" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" style="stop-color: var(--orange)" stop-opacity="0.22"></stop>
+              <stop offset="1" style="stop-color: var(--orange)" stop-opacity="0"></stop>
+            </linearGradient>
+          </defs>
+          <path d={`${PROFILE} L1000 300 L0 300Z`} fill="url(#fade)"></path>
+          <path class="profile-base" d={PROFILE} fill="none" vector-effect="non-scaling-stroke"></path>
+          <path class="profile-route" d={PROFILE} fill="none" vector-effect="non-scaling-stroke" data-route></path>
+        </svg>
+        <div class="pins" aria-hidden="true">
+          {firsts.map((_, i) => <span class="pin" data-pin={i}><span class="pin-n">0{i + 1}</span></span>)}
+        </div>
+
+        <ol class="firsts">
+          {
+            firsts.map((f, i) => (
+              <li class="first" data-first={i}>
+                <span class="first-n" aria-hidden="true">
+                  0{i + 1}
+                </span>
+                <div class="first-body">
+                  <span class="label label-orange">{f.tag}</span>
+                  <h3>{f.title}</h3>
+                  <p>{f.line}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Activities -->
+  <section id="activities" class="activities" aria-labelledby="act-title">
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        {
+          [0, 1].map(() => (
+            <span class="marquee-set">
+              {activities.map((a) => (
+                <>
+                  <span>{a.name}</span>
+                  <svg class="peak" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 L12 6 L21 18" /></svg>
+                </>
+              ))}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="act-head">
+        <p class="label label-orange">{c.actLabel}</p>
+        <h2 id="act-title" class="section-title">{c.actTitle}</h2>
+      </div>
+      <ol class="act-list">
+        {
+          activities.map((a, i) => (
+            <li class="act">
+              <span class="label act-n">0{i + 1}</span>
+              <h3 class="act-name">{a.name}</h3>
+              <p class="act-line">{a.line}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- The app -->
+  <section id="app" class="app" aria-labelledby="app-title">
+    <div class="wrap app-grid">
+      <div class="app-copy">
+        <p class="label label-orange">{c.appLabel}</p>
+        <h2 id="app-title" class="section-title">{c.appTitle}</h2>
+        <p class="app-text">{c.appText}</p>
+        <ul class="status" aria-label={c.statusAria}>
+          <li><span class="dot dot-live" aria-hidden="true"></span><b>iPhone</b><span class="label">{c.status[0]}</span></li>
+          <li><span class="dot" aria-hidden="true"></span><b>Android</b><span class="label">{c.status[1]}</span></li>
+          <li><span class="dot" aria-hidden="true"></span><b>NOC+</b><span class="label">{c.status[2]}</span></li>
+        </ul>
+        <div><Waitlist lang={lang} /></div>
+      </div>
+
+      <div class="app-visual"><AppShowcase lang={lang} /></div>
+    </div>
+  </section>
+
+  <!-- Join -->
+  <section id="join" class="join" aria-labelledby="join-title">
+    <ContourBackdrop />
+    <div class="wrap">
+      <p class="label label-orange">{c.joinLabel}</p>
+      <h2 id="join-title" class="join-title">
+        {c.join[0]}<br />{c.join[1]}<br /><span class="accent">{c.join[2]}</span>
+      </h2>
+      <p class="join-lede">{c.joinLede}</p>
+      <div class="join-cards">
+        <a class="join-card" href={DISCORD} rel="noopener">
+          <span class="label label-orange">{c.community}</span>
+          <span class="join-name">Discord</span>
+          <span class="join-sub">{c.discordSub}</span>
+          <span class="join-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="join-card" href={INSTAGRAM} rel="noopener">
+          <span class="label label-orange">{c.follow}</span>
+          <span class="join-name">Instagram</span>
+          <span class="join-sub">{INSTAGRAM_HANDLE}</span>
+          <span class="join-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+  // How far an element has travelled through the viewport (0 → 1), between its
+  // top reaching `start` (fraction of screen height) and its bottom reaching `end`.
+  const progress = (el: Element, start = 1, end = 0) => {
+    const r = el.getBoundingClientRect();
+    const vh = innerHeight;
+    return clamp((vh * start - r.top) / (r.height + vh * (start - end)));
+  };
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const manifesto = document.querySelector<HTMLElement>('[data-manifesto]');
+  const words = manifesto ? [...manifesto.querySelectorAll<HTMLElement>('.w')] : [];
+  const story = document.querySelector<HTMLElement>('[data-story]');
+  const route = story?.querySelector<SVGPathElement>('[data-route]') ?? null;
+  const pins = story ? [...story.querySelectorAll<HTMLElement>('[data-pin]')] : [];
+  const items = story ? [...story.querySelectorAll<HTMLElement>('[data-first]')] : [];
+  const STOPS = [0.2, 0.45, 0.68, 0.92];
+
+  if (story && !reduced) story.classList.add('is-pinned');
+
+  // Put the checkpoints on the route line.
+  let routeLen = 0;
+  const placePins = () => {
+    if (!route) return;
+    routeLen = route.getTotalLength();
+    const svg = route.ownerSVGElement!;
+    const host = story!.querySelector<HTMLElement>('.story-inner')!.getBoundingClientRect();
+    const box = svg.getBoundingClientRect();
+    pins.forEach((pin, i) => {
+      const p = route.getPointAtLength(routeLen * STOPS[i]);
+      pin.style.left = `${box.left - host.left + (p.x * box.width) / 1000}px`;
+      pin.style.top = `${box.top - host.top + (p.y * box.height) / 300}px`;
+    });
+    route.style.strokeDasharray = `${routeLen}`;
+  };
+
+  let ticking = false;
+  const frame = () => {
+    ticking = false;
+    if (hero && !reduced) hero.style.setProperty('--p', progress(hero, 0, -1).toFixed(4));
+
+    if (words.length && manifesto) {
+      const lit = reduced ? words.length : Math.round(progress(manifesto, 0.9, 0.45) * words.length * 1.08);
+      words.forEach((w, i) => w.classList.toggle('lit', i < lit));
+    }
+
+    if (story && route) {
+      const pinned = story.classList.contains('is-pinned');
+      const r = story.getBoundingClientRect();
+      const p = pinned ? clamp(-r.top / (r.height - innerHeight)) : 1;
+      route.style.strokeDashoffset = `${routeLen * (1 - p)}`;
+      let active = 0;
+      STOPS.forEach((s, i) => {
+        if (p >= s - 0.05) active = i;
+      });
+      pins.forEach((pin, i) => pin.classList.toggle('on', p >= STOPS[i] - 0.05));
+      items.forEach((it, i) => it.classList.toggle('active', !pinned || i === active));
+    }
+  };
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(frame);
+    }
+  };
+
+  placePins();
+  frame();
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', () => {
+    placePins();
+    onScroll();
+  });
+  document.fonts?.ready.then(() => {
+    placePins();
+    frame();
+  });
+</script>
+
+<style>
+  /* Hero */
+  .hero {
+    --p: 0;
+    position: relative;
+    margin-top: -65px;
+    min-height: max(100svh, 640px);
+    display: flex;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .sky {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(120% 70% at 65% 100%, var(--sky-hot) 0%, var(--sky-warm) 45%, var(--page) 78%);
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    transform: translate3d(0, calc(var(--p) * var(--depth) * 100vh), 0);
+  }
+  .glow {
+    position: absolute;
+    left: 78%;
+    bottom: 26%;
+    width: 120vmax;
+    height: 80vmax;
+    translate: -50% 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--orange) 60%, transparent),
+      color-mix(in srgb, var(--orange) 22%, transparent) 36%,
+      color-mix(in srgb, var(--orange) 6%, transparent) 62%,
+      transparent
+    );
+    animation:
+      glow-in 2.4s var(--ease-out) both,
+      breathe 7s ease-in-out 2.4s infinite;
+  }
+  @keyframes glow-in {
+    from {
+      opacity: 0;
+      scale: 0.5;
+    }
+  }
+  @keyframes breathe {
+    50% {
+      opacity: 0.78;
+      scale: 1.06;
+    }
+  }
+  .sun {
+    position: absolute;
+    left: 78%;
+    bottom: 22%;
+    width: min(38vw, 520px);
+    opacity: 0.92;
+    filter: drop-shadow(0 0 40px color-mix(in srgb, var(--orange) 45%, transparent));
+    translate: -50% 0;
+    animation: rise 2.8s var(--ease-out) 0.1s both;
+  }
+  .sun img {
+    width: 100%;
+    animation: turn 90s linear infinite;
+  }
+  @keyframes rise {
+    from {
+      transform: translateY(70%);
+      opacity: 0;
+    }
+    35% {
+      opacity: 1;
+    }
+  }
+  @keyframes turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .ridge {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
+  .ridge-back {
+    height: 64%;
+    animation: ridge-in 2.2s var(--ease-out) both;
+  }
+  .ridge-mid {
+    height: 50%;
+    animation: ridge-in 2.2s var(--ease-out) 0.08s both;
+  }
+  .ridge-front {
+    height: 40%;
+    bottom: -1px;
+  }
+  @keyframes ridge-in {
+    from {
+      transform: translateY(12%);
+    }
+  }
+
+  .hero-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+    padding-top: calc(65px + clamp(28px, 6vh, 80px));
+    padding-bottom: clamp(28px, 5vh, 56px);
+  }
+  .motto {
+    margin-top: 18px;
+    font-size: min(14.5vw, 12.5rem, 19vh);
+    line-height: 0.84;
+    letter-spacing: -0.01em;
+  }
+  .motto .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.05em;
+    margin-bottom: -0.05em;
+  }
+  .motto .line > span {
+    display: inline-block;
+    white-space: nowrap;
+    animation: line-up 1.3s var(--ease-out) both;
+    animation-delay: calc(0.2s + var(--i) * 0.12s);
+  }
+  @keyframes line-up {
+    from {
+      transform: translateY(108%);
+    }
+  }
+  .accent {
+    color: var(--orange);
+  }
+  .hero-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px 48px;
+    animation: fade-up 1.2s var(--ease-out) 0.75s both;
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+  .lede {
+    max-width: 29rem;
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    line-height: 1.5;
+    text-shadow: 0 1px 14px rgb(0 0 0 / 0.6);
+  }
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  @media (max-width: 760px) {
+    /* On phones the sun is placed from the top, just under the motto (whose
+       height follows the screen width), so it never rises into the words. */
+    .hero {
+      --sun-top: calc(65px + clamp(28px, 6vh, 80px) + 24px + 36.6vw + 28px);
+      --sun-size: min(56vw, 30svh, 280px);
+      min-height: max(100svh, 700px);
+    }
+    .glow,
+    .sun {
+      left: 50%;
+      bottom: auto;
+    }
+    .sun {
+      top: var(--sun-top);
+      width: var(--sun-size);
+    }
+    /* Keep the sun's space free, so the text below never runs over it. */
+    .hero-content > div:first-child {
+      padding-bottom: calc(var(--sun-size) + 8px);
+    }
+    .glow {
+      top: calc(var(--sun-top) + var(--sun-size) / 2);
+      width: 160vw;
+      height: 120vw;
+      translate: -50% -50%;
+    }
+    .ridge-back {
+      height: 58%;
+    }
+    .ridge-mid {
+      height: 48%;
+    }
+    .ridge-front {
+      height: 38%;
+    }
+  }
+
+  /* Manifesto */
+  .manifesto {
+    padding-block: clamp(96px, 16vw, 200px);
+  }
+  .manifesto-text {
+    margin-top: 28px;
+    font-family: var(--display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(2.3rem, 6.4vw, 5.6rem);
+    line-height: 0.95;
+    max-width: 22ch;
+  }
+  .w {
+    /* Dimmed until read, but still 3:1 against the page (large text). */
+    color: var(--dim);
+    transition: color 0.35s ease;
+  }
+  .w.lit {
+    color: var(--ice);
+  }
+  .w.hot.lit {
+    color: var(--orange);
+  }
+  :global(html:not(.js)) .w {
+    color: var(--ice);
+  }
+
+  /* Story */
+  .story {
+    position: relative;
+    background: linear-gradient(var(--page), var(--story-warm) 50%, var(--page));
+  }
+  .story-pin {
+    padding-block: clamp(64px, 10vw, 120px);
+  }
+  .story-inner {
+    position: relative;
+  }
+  .story-title {
+    margin-top: 14px;
+    font-size: clamp(2.6rem, 6.5vw, 5.2rem);
+    max-width: 12ch;
+  }
+  .profile {
+    display: block;
+    width: 100%;
+    height: clamp(120px, 24vh, 260px);
+    margin-top: 32px;
+    overflow: visible;
+  }
+  .profile-base {
+    stroke: #555;
+    stroke-width: 2;
+    stroke-dasharray: 2 7;
+  }
+  .profile-route {
+    stroke: var(--orange);
+    stroke-width: 3;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--orange) 70%, transparent));
+  }
+  .pins {
+    display: none;
+  }
+  .firsts {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 32px;
+  }
+  .first {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .first-n {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(3.6rem, 9vw, 8rem);
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--orange);
+  }
+  .first h3 {
+    margin-top: 8px;
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
+  }
+  .first p {
+    margin-top: 10px;
+    max-width: 26rem;
+    font-size: 1.1rem;
+    color: var(--stone-text);
+  }
+
+  /* Pinned: the section is tall, its inside sticks, and scrolling walks the route. */
+  .story.is-pinned {
+    height: 420vh;
+  }
+  .is-pinned .story-pin {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    padding-block: 80px 32px;
+    overflow: hidden;
+  }
+  .is-pinned .story-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px 48px;
+    align-items: end;
+  }
+  .is-pinned .profile {
+    grid-column: 1 / -1;
+    margin-top: 28px;
+  }
+  .is-pinned .pins {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .pin {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: var(--page);
+    border: 2px solid var(--pin);
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.4s ease,
+      scale 0.4s var(--ease-out);
+  }
+  .pin.on {
+    background: var(--orange);
+    border-color: var(--orange);
+    box-shadow:
+      0 0 0 8px color-mix(in srgb, var(--orange) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--orange) 80%, transparent);
+    scale: 1.15;
+  }
+  .pin-n {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    translate: -50% 0;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--stone-text);
+  }
+  .pin.on .pin-n {
+    color: var(--orange);
+  }
+  .is-pinned .firsts {
+    grid-row: 1;
+    grid-column: 2;
+    margin: 0;
+  }
+  .is-pinned .first {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.45s ease,
+      transform 0.7s var(--ease-out);
+  }
+  .is-pinned .first.active {
+    opacity: 1;
+    transform: none;
+  }
+  @media (max-width: 760px) {
+    .is-pinned .story-inner {
+      grid-template-columns: 1fr;
+    }
+    .is-pinned .firsts {
+      grid-row: 3;
+      grid-column: 1;
+    }
+    .is-pinned .profile {
+      grid-row: 2;
+      margin-top: 36px;
+    }
+  }
+
+  /* Activities */
+  .activities {
+    padding-bottom: clamp(80px, 12vw, 160px);
+  }
+  .marquee {
+    overflow: hidden;
+    padding-block: 28px;
+    border-block: 1px solid var(--line);
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 40s linear infinite;
+  }
+  .marquee-set {
+    display: flex;
+    align-items: center;
+  }
+  .marquee-set span {
+    font-family: var(--display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--outline);
+    padding-inline: 0.25em;
+  }
+  .peak {
+    flex: none;
+    width: clamp(1.2rem, 2.6vw, 2rem);
+    height: clamp(1.2rem, 2.6vw, 2rem);
+    margin-inline: 0.35em;
+    fill: none;
+    stroke: var(--orange);
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .act-head {
+    padding-top: clamp(64px, 10vw, 120px);
+  }
+  .section-title {
+    margin-top: 14px;
+    font-size: clamp(2.6rem, 6.5vw, 5.2rem);
+  }
+  .act-list {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .act {
+    position: relative;
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 8px 24px;
+    padding: 26px 12px;
+    border-bottom: 1px solid var(--line);
+    isolation: isolate;
+  }
+  .act::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--orange);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.5s var(--ease-out);
+  }
+  .act-name {
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    transition:
+      transform 0.5s var(--ease-out),
+      color 0.3s ease;
+  }
+  .act-line {
+    color: var(--stone-text);
+    transition: color 0.3s ease;
+  }
+  @media (hover: hover) {
+    .act:hover::before {
+      transform: scaleY(1);
+    }
+    .act:hover .act-name {
+      transform: translateX(12px);
+    }
+    .act:hover .act-name,
+    .act:hover .act-line,
+    .act:hover .act-n {
+      color: var(--page);
+    }
+  }
+  @media (max-width: 760px) {
+    .act {
+      grid-template-columns: 2.4rem minmax(0, 1fr);
+      padding: 20px 4px;
+    }
+    .act-line {
+      grid-column: 2;
+    }
+  }
+
+  /* App */
+  .app {
+    padding-block: clamp(80px, 12vw, 160px);
+    border-top: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .app-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(48px, 7vw, 96px);
+  }
+  .app-text {
+    margin-top: 24px;
+    max-width: 34rem;
+    font-size: 1.1rem;
+  }
+  .status {
+    list-style: none;
+    margin: 36px 0 0;
+    padding: 0;
+    max-width: 30rem;
+    border-top: 1px solid var(--line);
+  }
+  .status li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .status b {
+    flex: 1;
+    font-family: var(--display);
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .dot {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--stone);
+  }
+  .dot-live {
+    background: var(--moss);
+    border-color: var(--moss);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 60%, transparent);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 12px color-mix(in srgb, var(--moss) 0%, transparent);
+    }
+  }
+  @media (max-width: 860px) {
+    .app-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Join */
+  .join {
+    position: relative;
+    padding-block: clamp(96px, 14vw, 200px);
+    overflow: hidden;
+    isolation: isolate;
+    border-top: 1px solid var(--line);
+  }
+  .join-title {
+    margin-top: 18px;
+    font-size: clamp(3.4rem, 11vw, 10rem);
+    line-height: 0.86;
+  }
+  .join-lede {
+    margin-top: 28px;
+    max-width: 30rem;
+    font-size: 1.15rem;
+  }
+  .join-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 14px;
+    margin-top: 48px;
+  }
+  .join-card {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    padding: 28px 28px 30px;
+    border-radius: 24px;
+    background: color-mix(in srgb, var(--page) 80%, transparent);
+    border: 1px solid var(--line);
+    text-decoration: none;
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      transform 0.5s var(--ease-out),
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+  .join-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--orange);
+    clip-path: circle(0% at 100% 0%);
+    transition: clip-path 0.7s var(--ease-out);
+  }
+  .join-name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.8rem, 6vw, 4.2rem);
+    text-transform: uppercase;
+    line-height: 0.95;
+    margin-top: 10px;
+  }
+  .join-sub {
+    color: var(--stone-text);
+    transition: color 0.3s ease;
+  }
+  .join-arrow {
+    position: absolute;
+    top: 22px;
+    right: 26px;
+    font-size: 1.8rem;
+    transition: transform 0.5s var(--ease-out);
+  }
+  .join-card:hover,
+  .join-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: var(--orange);
+    color: var(--page);
+  }
+  .join-card:hover::before,
+  .join-card:focus-visible::before {
+    clip-path: circle(150% at 100% 0%);
+  }
+  .join-card:hover .join-sub,
+  .join-card:hover .label-orange,
+  .join-card:focus-visible .join-sub,
+  .join-card:focus-visible .label-orange {
+    color: var(--page);
+  }
+  .join-card:hover .join-arrow {
+    transform: translate(4px, -4px);
+  }
+  .join-card:focus-visible {
+    outline-color: var(--ice);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .layer {
+      transform: none;
+    }
+    .w,
+    .w.lit {
+      color: var(--ice);
+    }
+    .w.hot,
+    .w.hot.lit {
+      color: var(--orange);
+    }
+  }
+</style>

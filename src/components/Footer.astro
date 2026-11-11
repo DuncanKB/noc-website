@@ -1,18 +1,25 @@
 ---
 import { DISCORD, INSTAGRAM } from '../links';
+import { UI, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'en' } = Astro.props;
+const t = UI[lang];
 ---
 
 <footer class="site-footer">
   <div class="wrap footer-row">
-    <p class="footer-motto">Do the things you haven’t done yet.</p>
+    <p class="footer-motto">{t.motto}</p>
     <ul class="footer-links">
       <li><a href={DISCORD} rel="noopener">Discord</a></li>
       <li><a href={INSTAGRAM} rel="noopener">Instagram</a></li>
-      <li><a href="/support">Support</a></li>
-      <li><a href="/privacy">Privacy policy</a></li>
-      <li><a href="/terms">Terms</a></li>
+      <li><a href={t.supportHref}>{t.support}</a></li>
+      <li><a href="/privacy" hreflang="en">{t.privacy}</a></li>
+      <li><a href="/terms" hreflang="en">{t.terms}</a></li>
     </ul>
-    <p class="footer-note">© {new Date().getFullYear()} NEVERMADE OUTDOOR CLUB · Made in the Netherlands · No tracking on this site</p>
+    <p class="footer-note">© {new Date().getFullYear()} NEVERMADE OUTDOOR CLUB · {t.footerNote}</p>
   </div>
   <p class="footer-mark" aria-hidden="true">NOC</p>
 </footer>

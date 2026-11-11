@@ -1,13 +1,36 @@
 ---
 import { CONTACT_EMAIL } from '../links';
+import { HOME, UI, type Lang } from '../i18n';
 // "Tell me when the app is out": one email field. Posts to /api/waitlist
 // (worker/index.ts). Works without JavaScript too (the server redirects back
 // with ?waitlist=ok / ?waitlist=error); with JavaScript it answers in place.
 const CONTACT = CONTACT_EMAIL;
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'en' } = Astro.props;
+const t = UI[lang].waitlist;
 ---
 
-<form id="waitlist" class="waitlist"action="/api/waitlist" method="post" data-waitlist novalidate>
-  <label class="label label-orange" for="waitlist-email">Get told first</label>
+<form
+  id="waitlist"
+  class="waitlist"
+  action="/api/waitlist"
+  method="post"
+  data-waitlist
+  data-idle={t.idle}
+  data-sending={t.sending}
+  data-done={t.done}
+  data-ok={t.ok}
+  data-invalid={t.invalid}
+  data-error={t.error}
+  data-offline={t.offline}
+  novalidate
+>
+  <label class="label label-orange" for="waitlist-email">{t.label}</label>
+  <!-- Where to come back to after a no-JavaScript submit. -->
+  <input type="hidden" name="from" value={HOME[lang]} />
   <div class="wl-row">
     <input
       id="waitlist-email"
@@ -17,7 +40,7 @@ const CONTACT = CONTACT_EMAIL;
       autocomplete="email"
       required
       maxlength="254"
-      placeholder="you@example.com"
+      placeholder={t.placeholder}
       aria-describedby="waitlist-note waitlist-msg"
     />
     <!-- Bots fill every field; people never see this one. -->
@@ -26,14 +49,13 @@ const CONTACT = CONTACT_EMAIL;
       <input id="waitlist-company" name="company" type="text" tabindex="-1" autocomplete="off" />
     </div>
     <button class="btn wl-btn" type="submit">
-      <span class="wl-label" data-label>Notify me</span>
+      <span class="wl-label" data-label>{t.idle}</span>
       <svg class="wl-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
     </button>
   </div>
   <p id="waitlist-msg" class="wl-msg" role="status" aria-live="polite"></p>
   <p id="waitlist-note" class="wl-note">
-    One email when the app launches, nothing else. We only keep your address for that, never share or sell it, and
-    delete it on request: <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+    {t.note} <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
   </p>
 </form>
 
@@ -42,6 +64,8 @@ const CONTACT = CONTACT_EMAIL;
   const msg = form?.querySelector<HTMLElement>('.wl-msg');
   const button = form?.querySelector<HTMLButtonElement>('button');
   const label = form?.querySelector<HTMLElement>('[data-label]');
+  // The words, in the page's language, come from the form's data-* attributes.
+  const text = (key: 'idle' | 'sending' | 'done' | 'ok' | 'invalid' | 'error' | 'offline') => form?.dataset[key] ?? '';
   const say = (text: string, ok: boolean) => {
     if (!form || !msg) return;
     msg.textContent = text;
@@ -52,7 +76,7 @@ const CONTACT = CONTACT_EMAIL;
   const setState = (state: 'idle' | 'sending' | 'done') => {
     if (!form || !button || !label) return;
     form.dataset.state = state;
-    label.textContent = state === 'sending' ? 'Sending…' : state === 'done' ? 'On the list' : 'Notify me';
+    label.textContent = text(state);
     button.disabled = state === 'sending';
     button.setAttribute('aria-busy', String(state === 'sending'));
   };
@@ -60,17 +84,17 @@ const CONTACT = CONTACT_EMAIL;
   // Result after a no-JavaScript submit.
   const result = new URLSearchParams(location.search).get('waitlist');
   if (result === 'ok') {
-    say('You’re on the list. See you at launch.', true);
+    say(text('ok'), true);
     setState('done');
   }
-  if (result === 'invalid') say('That email doesn’t look right. Try again?', false);
-  if (result === 'error') say('Something went wrong. Please try again in a minute.', false);
+  if (result === 'invalid') say(text('invalid'), false);
+  if (result === 'error') say(text('error'), false);
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const input = form.querySelector<HTMLInputElement>('input[name=email]')!;
     if (!input.checkValidity() || !input.value.trim()) {
-      say('That email doesn’t look right. Try again?', false);
+      say(text('invalid'), false);
       input.focus();
       return;
     }
@@ -84,16 +108,16 @@ const CONTACT = CONTACT_EMAIL;
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (res.ok && data.ok) {
-        say('You’re on the list. See you at launch.', true);
+        say(text('ok'), true);
         form.reset();
         done = true;
       } else if (data.error === 'invalid') {
-        say('That email doesn’t look right. Try again?', false);
+        say(text('invalid'), false);
       } else {
-        say('Something went wrong. Please try again in a minute.', false);
+        say(text('error'), false);
       }
     } catch {
-      say('No connection. Please try again.', false);
+      say(text('offline'), false);
     } finally {
       setState(done ? 'done' : 'idle');
     }

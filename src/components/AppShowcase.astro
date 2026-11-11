@@ -5,6 +5,13 @@
 // slides; the highlighted tab follows. Screens: src/data/app-screens.ts, images
 // made by `npm run screens`.
 import { APP_SCREENS } from '../data/app-screens';
+import { UI, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = 'en' } = Astro.props;
+const t = UI[lang].showcase;
 ---
 
 <div class="showcase" data-showcase>
@@ -17,15 +24,15 @@ import { APP_SCREENS } from '../data/app-screens';
           tabindex="0"
           role="group"
           aria-roledescription="carousel"
-          aria-label="Screens from the NOC app. Use the arrow keys to move between them."
+          aria-label={t.carousel}
           data-track
         >
           {
             APP_SCREENS.map((s, i) => (
-              <figure class="slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${APP_SCREENS.length}: ${s.title}`}>
+              <figure class="slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} ${t.of} ${APP_SCREENS.length}: ${s.title}`}>
                 <img
                   src={`/app/${s.file}`}
-                  alt={s.alt}
+                  alt={s.alt[lang]}
                   width="828"
                   height="1512"
                   loading={i === 0 ? 'eager' : 'lazy'}
@@ -48,14 +55,14 @@ import { APP_SCREENS } from '../data/app-screens';
   </div>
 
   <div class="controls">
-    <button class="arrow" type="button" data-prev aria-label="Previous screen">
+    <button class="arrow" type="button" data-prev aria-label={t.prev}>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
     </button>
     <div class="caption" aria-live="polite">
       <span class="label label-orange" data-title>{APP_SCREENS[0].title}</span>
-      <span class="caption-text" data-caption>{APP_SCREENS[0].caption}</span>
+      <span class="caption-text" data-caption>{APP_SCREENS[0].caption[lang]}</span>
     </div>
-    <button class="arrow" type="button" data-next aria-label="Next screen">
+    <button class="arrow" type="button" data-next aria-label={t.next}>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
     </button>
   </div>
@@ -66,7 +73,9 @@ import { APP_SCREENS } from '../data/app-screens';
           class="dot"
           type="button"
           data-dot={i}
-          aria-label={`Show ${s.title}`}
+          data-title={s.title}
+          data-caption={s.caption[lang]}
+          aria-label={`${t.show} ${s.title}`}
           aria-current={i === 0 ? 'true' : undefined}
         />
       ))
@@ -75,8 +84,6 @@ import { APP_SCREENS } from '../data/app-screens';
 </div>
 
 <script>
-  import { APP_SCREENS } from '../data/app-screens';
-
   for (const root of document.querySelectorAll<HTMLElement>('[data-showcase]')) {
     const track = root.querySelector<HTMLElement>('[data-track]')!;
     const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-dot]')];
@@ -85,7 +92,8 @@ import { APP_SCREENS } from '../data/app-screens';
     const title = root.querySelector<HTMLElement>('[data-title]')!;
     const caption = root.querySelector<HTMLElement>('[data-caption]')!;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const count = APP_SCREENS.length;
+    // Titles and captions (in the page's language) are on the dots.
+    const count = dots.length;
     let current = 0;
 
     // Load the other screens once the phone is almost in view, so a swipe never
@@ -104,8 +112,8 @@ import { APP_SCREENS } from '../data/app-screens';
     const show = (i: number) => {
       if (i === current) return;
       current = i;
-      title.textContent = APP_SCREENS[i].title;
-      caption.textContent = APP_SCREENS[i].caption;
+      title.textContent = dots[i].dataset.title ?? '';
+      caption.textContent = dots[i].dataset.caption ?? '';
       tabs.forEach((t, j) => t.classList.toggle('on', j === i));
       dots.forEach((d, j) => (j === i ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
       prev.disabled = i === 0;

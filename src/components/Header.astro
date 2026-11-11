@@ -1,19 +1,36 @@
 ---
-const home = Astro.url.pathname === '/';
-const link = (hash: string) => (home ? hash : `/${hash}`);
+import { HOME, UI, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+  // The same page in the other language.
+  switchHref: string;
+}
+const { lang = 'en', switchHref } = Astro.props;
+const t = UI[lang];
+const home = HOME[lang];
+// Hash links go to the home page in this language (on the home page itself the
+// browser just scrolls).
+const link = (hash: string) => `${home}${hash}`;
+const otherCode = lang === 'en' ? 'nl' : 'en';
 ---
 
 <header class="site-header">
   <div class="wrap header-row">
-    <a class="brand" href="/" aria-label="NEVERMADE OUTDOOR CLUB, home">
+    <a class="brand" href={home} aria-label={t.brandHome}>
       <img src="/club-badge-96.webp" alt="" width="40" height="40" />
       <span class="brand-text">NEVERMADE<br />OUTDOOR CLUB</span>
     </a>
-    <nav aria-label="Main">
+    <nav aria-label={lang === 'nl' ? 'Hoofdmenu' : 'Main'}>
       <ul>
-        <li class="hide-sm"><a href={link('#story')}>How it works</a></li>
-        <li class="hide-sm"><a href={link('#app')}>The app</a></li>
-        <li><a class="btn btn-small" href={link('#waitlist')}>Get the app</a></li>
+        <li class="hide-sm"><a href={link('#story')}>{t.howItWorks}</a></li>
+        <li class="hide-sm"><a href={link('#app')}>{t.theApp}</a></li>
+        <li>
+          <a class="lang-switch" href={switchHref} hreflang={otherCode} lang={otherCode} aria-label={t.switchTo}>
+            {otherCode.toUpperCase()}
+          </a>
+        </li>
+        <li><a class="btn btn-small" href={link('#waitlist')}>{t.getTheApp}</a></li>
       </ul>
     </nav>
   </div>

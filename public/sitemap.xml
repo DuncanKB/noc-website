@@ -2,7 +2,9 @@
 <!-- The pages Google should know about. Add a <url> here for every new page. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.nevermadeoutdoorclub.com/</loc></url>
+  <url><loc>https://www.nevermadeoutdoorclub.com/nl</loc></url>
   <url><loc>https://www.nevermadeoutdoorclub.com/support</loc></url>
+  <url><loc>https://www.nevermadeoutdoorclub.com/nl/support</loc></url>
   <url><loc>https://www.nevermadeoutdoorclub.com/privacy</loc></url>
   <url><loc>https://www.nevermadeoutdoorclub.com/terms</loc></url>
 </urlset>

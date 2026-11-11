@@ -367,3 +367,11 @@ p {
   user-select: none;
   translate: 0 18%;
 }
+
+/* EN / NL switch in the header. */
+.site-header nav a.lang-switch {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  padding: 8px 4px;
+}

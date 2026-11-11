@@ -7,23 +7,31 @@ import '@fontsource/ibm-plex-mono/latin-500.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { UI, otherLang, type Lang } from '../i18n';
 
 interface Props {
   title: string;
   description: string;
   noindex?: boolean;
+  lang?: Lang;
+  // True when this page also exists in the other language (home, support).
+  translated?: boolean;
 }
 
-const { title, description, noindex = false } = Astro.props;
+const { title, description, noindex = false, lang = 'en', translated = false } = Astro.props;
 const site = Astro.site!;
 // Pages are built as privacy.html but served (and linked) as /privacy.
 const path = Astro.url.pathname.replace(/(index)?\.html$/, '');
 const canonical = new URL(path || '/', site).href;
 const ogImage = new URL('/og.png', site).href;
+const other = otherLang(lang, path || '/');
+const alternates = translated
+  ? { [lang]: canonical, [other.lang]: new URL(other.href, site).href }
+  : null;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <script is:inline>document.documentElement.classList.add("js");</script>
@@ -31,6 +39,15 @@ const ogImage = new URL('/og.png', site).href;
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    {
+      alternates && (
+        <>
+          <link rel="alternate" hreflang="en" href={alternates.en} />
+          <link rel="alternate" hreflang="nl" href={alternates.nl} />
+          <link rel="alternate" hreflang="x-default" href={alternates.en} />
+        </>
+      )
+    }
     <meta name="theme-color" content="#191c1d" />
     <meta name="color-scheme" content="dark" />
 
@@ -39,6 +56,7 @@ const ogImage = new URL('/og.png', site).href;
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={lang === 'nl' ? 'nl_NL' : 'en_GB'} />
     <meta property="og:site_name" content="NEVERMADE OUTDOOR CLUB" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -50,12 +68,12 @@ const ogImage = new URL('/og.png', site).href;
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
-    <Header />
+    <a class="skip" href="#main">{UI[lang].skip}</a>
+    <Header lang={lang} switchHref={other.href} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
     <script>
       // Header turns solid after the first screen; [data-reveal] elements fade up into view.
       const header = document.querySelector('.site-header');

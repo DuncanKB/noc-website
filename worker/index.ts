@@ -47,10 +47,11 @@ export default {
 
 async function waitlist(request: Request, env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
   const wantsJson = (request.headers.get('accept') ?? '').includes('application/json');
+  let back = '/';
   const reply = (status: number, result: 'ok' | 'invalid' | 'error') =>
     wantsJson
       ? Response.json(result === 'ok' ? { ok: true } : { ok: false, error: result }, { status })
-      : Response.redirect(`${url.origin}/?waitlist=${result}#app`, 303);
+      : Response.redirect(`${url.origin}${back}?waitlist=${result}#app`, 303);
 
   // Only accept form posts from this site.
   const origin = request.headers.get('origin');
@@ -62,6 +63,7 @@ async function waitlist(request: Request, env: Env, url: URL, ctx: ExecutionCont
   } catch {
     return reply(400, 'invalid');
   }
+  if (form.get('from') === '/nl') back = '/nl';
 
   // Honeypot: a field hidden from people. Pretend it worked so bots move on.
   if (String(form.get('company') ?? '').trim()) return reply(200, 'ok');
