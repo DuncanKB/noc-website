@@ -1,0 +1,170 @@
+---
+// Terms of use for the NOC app and community, at /terms. Keep them in step
+// with the app (community rules: lib/community-model.ts; NOC+: app/plus.tsx)
+// and with the privacy policy; change the date at the top when they change.
+import Base from '../layouts/Base.astro';
+import Section from '../components/PolicySection.astro';
+import { CONTACT_EMAIL } from '../links';
+
+const UPDATED = '11 November 2026';
+const CONTACT = CONTACT_EMAIL;
+---
+
+<Base
+  title="Terms of use — NEVERMADE OUTDOOR CLUB"
+  description="The terms for using the NEVERMADE OUTDOOR CLUB app and community: your account, safety outdoors, the community rules, NOC+ and your rights."
+>
+  <article class="wrap policy">
+    <a href="/" class="label back">← NEVERMADE OUTDOOR CLUB</a>
+    <h1>Terms<br />of use</h1>
+    <p class="label meta">The NEVERMADE OUTDOOR CLUB app · Last updated {UPDATED}</p>
+    <p class="intro">
+      These terms apply when you use the NEVERMADE OUTDOOR CLUB app (NOC) and its community. By creating an account
+      you agree to them. They're written to be read: if anything is unclear, ask us. How we handle your data is in
+      the <a href="/privacy">privacy policy</a>.
+    </p>
+
+    <div class="sections">
+      <Section index="01" title="Who we are">
+        <p>
+          NOC is run by Duncan Kersbergen in the Netherlands. Questions, requests or complaints:{' '}
+          <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+        </p>
+      </Section>
+
+      <Section index="02" title="Your account">
+        <ul>
+          <li>You need to be <strong>16 or older</strong> to use NOC.</li>
+          <li>Use your own details, one account per person, and keep your password to yourself.</li>
+          <li>You're responsible for what happens on your account. Tell us if you think someone else is using it.</li>
+        </ul>
+      </Section>
+
+      <Section index="03" title="Outdoors, at your own risk">
+        <p>
+          NOC helps you find places, plan routes, record outings and chase your firsts. Whether an outing is safe for
+          you is your call:
+        </p>
+        <ul>
+          <li>
+            <strong>Check before you go:</strong> weather, daylight, terrain, your gear, your fitness and local rules.
+            Turn back when it doesn't feel right.
+          </li>
+          <li>
+            <strong>Maps and routes can be wrong:</strong> paths close, distances and directions may be off, and GPS can
+            be inaccurate, especially in forests, mountains and cities. Use your own judgement and signs on the ground.
+          </li>
+          <li>
+            <strong>Don't let the app distract you</strong> while you ride, run near traffic or move over difficult
+            ground.
+          </li>
+          <li>
+            <strong>In an emergency</strong>, call the local emergency number (112 in Europe). NOC is not an emergency
+            or safety service.
+          </li>
+        </ul>
+      </Section>
+
+      <Section index="04" title="The community">
+        <p>Everyone who posts agrees to the community rules in the app. In short:</p>
+        <ul>
+          <li><strong>Be decent:</strong> no harassment, hate, threats or bullying.</li>
+          <li><strong>Keep it real:</strong> share your own outings and words. No spam, scams, fake accounts or advertising.</li>
+          <li>
+            <strong>Keep people safe:</strong> don't encourage dangerous behaviour, and don't share where someone else
+            lives or will be without their consent.
+          </li>
+          <li><strong>Keep it clean:</strong> no nudity, sexual content or graphic violence.</li>
+        </ul>
+        <p>
+          You can report and block anyone. Reports are reviewed within 24 hours. We remove content that breaks the
+          rules, and people who break them repeatedly lose access to the community.
+        </p>
+      </Section>
+
+      <Section index="05" title="Your content">
+        <p>
+          What you record and post stays yours. You give us permission to store it and show it to the people you
+          choose, only to run NOC. You can delete an outing, post or comment at any time. Only post what you have the
+          right to share.
+        </p>
+      </Section>
+
+      <Section index="06" title="NOC+">
+        <p>
+          NOC+ is an optional membership with extras. For now there's a free 14-day trial, once per account; nothing
+          is charged. When NOC+ can be bought, the price and what's included are shown in the app before you buy, and
+          payment, renewal and cancellation run through your Apple account under Apple's terms. You keep everything
+          you recorded when NOC+ ends.
+        </p>
+      </Section>
+
+      <Section index="07" title="The app">
+        <p>
+          NOC is still being built. Features can change, and we can't promise the app is always available or free of
+          errors. If you downloaded NOC from the App Store, Apple's Licensed Application End User License Agreement
+          applies as well.
+        </p>
+      </Section>
+
+      <Section index="08" title="Liability">
+        <p>
+          As far as the law allows, we're not liable for injury, loss or damage from outdoor activities, from relying
+          on maps, routes or other information in NOC, or from the app being unavailable. Nothing in these terms
+          limits liability that can't be limited by law, or your rights as a consumer.
+        </p>
+      </Section>
+
+      <Section index="09" title="Ending">
+        <p>
+          You can stop at any time: delete your account in the app (Settings → Delete account). We can suspend or end
+          an account that breaks these terms or the community rules.
+        </p>
+      </Section>
+
+      <Section index="10" title="Changes and law">
+        <p>
+          If we change these terms, we update them here and change the date at the top; for important changes we'll
+          also tell you in the app. Dutch law applies. If you're a consumer in another country, you keep the
+          protection its law gives you, and you can go to the courts where you live.
+        </p>
+      </Section>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .policy {
+    max-width: 760px;
+    padding-block: 48px 96px;
+  }
+  .back {
+    text-decoration: none;
+    display: inline-block;
+    padding: 6px 0;
+  }
+  .back:hover {
+    color: var(--ice);
+  }
+  h1 {
+    margin-top: 28px;
+    font-size: clamp(3.4rem, 12vw, 5.5rem);
+    line-height: 0.85;
+  }
+  .meta {
+    margin-top: 20px;
+  }
+  .intro {
+    margin-top: 28px;
+    font-size: 1.05rem;
+  }
+  .intro a {
+    color: var(--orange);
+    text-underline-offset: 3px;
+  }
+  .sections {
+    margin-top: 48px;
+    display: grid;
+    gap: 44px;
+  }
+</style>

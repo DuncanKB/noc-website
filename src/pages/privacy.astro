@@ -7,7 +7,7 @@ import { CONTACT_EMAIL } from '../links';
 import Base from '../layouts/Base.astro';
 import Section from '../components/PolicySection.astro';
 
-const UPDATED = '10 November 2026'; // contact address changed
+const UPDATED = '11 November 2026'; // added: this website and the waitlist (section 10)
 const CONTACT = CONTACT_EMAIL;
 ---
 
@@ -165,7 +165,35 @@ const CONTACT = CONTACT_EMAIL;
         <p>NEVERMADE is meant for people aged 16 and over. We don't knowingly collect data from younger children.</p>
       </Section>
 
-      <Section index="10" title="Changes">
+      <Section index="10" title="This website and the waitlist">
+        <p>
+          This website (nevermadeoutdoorclub.com) uses no cookies, no analytics and no tracking. Our hosting provider,
+          Cloudflare, processes technical data such as your IP address to deliver the site and protect it from abuse;
+          we don't use that data ourselves.
+        </p>
+        <ul>
+          <li>
+            <strong>The waitlist:</strong> if you leave your email address under "Get told first", we store that
+            address and the date you signed up. Nothing else.
+          </li>
+          <li>
+            <strong>Why</strong> (your consent): to send you one email when the app launches. We don't use your address
+            for anything else and never share or sell it.
+          </li>
+          <li>
+            <strong>Where:</strong> it's stored with Cloudflare. To send the launch email we may use an email service,
+            which receives your address only to send that email. Like the services in section 06, they process it on
+            our behalf under a data processing agreement and, where data leaves the European Economic Area, the EU
+            Standard Contractual Clauses.
+          </li>
+          <li>
+            <strong>How long:</strong> until we've sent the launch email; then we delete it. To be removed sooner,
+            email <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
+          </li>
+        </ul>
+      </Section>
+
+      <Section index="11" title="Changes">
         <p>
           If we change this policy, we update it here and change the date at the top. For important changes we'll
           also tell you in the app.
