@@ -38,6 +38,6 @@ export const APP_SCREENS: AppScreen[] = [
     file: '5-mine.webp',
     title: 'Mine',
     caption: 'Your journal of firsts',
-    alt: 'The Mine screen: a profile from Utrecht with 64 adventures, 487.3 km, 21 firsts and 12 places, the chapter "Chasing firsts", and a journal with a 16.4 km hike near Amsterdam that earned a first half-day hike.',
+    alt: 'The Mine screen: a profile from Amsterdam with 64 adventures, 487.3 km, 21 firsts and 12 places, the chapter "Chasing firsts", and a journal with a 16.4 km hike near Amsterdam that earned a first half-day hike.',
   },
 ];
