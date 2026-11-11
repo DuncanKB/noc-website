@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "images": "node scripts/make-images.mjs",
     "screens": "node scripts/make-screens.mjs",
+    "social": "node scripts/make-social.mjs",
     "waitlist:export": "node scripts/waitlist.mjs export",
     "waitlist:delete": "node scripts/waitlist.mjs delete"
   },
