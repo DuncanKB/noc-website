@@ -1,7 +1,9 @@
 ---
 // A phone with the real app screens: swipe on touch screens, drag with a
-// mouse, or use the arrows, the dots or the arrow keys. The screens come from
-// src/data/app-screens.ts.
+// mouse, or use the arrows, the dots or the arrow keys. Like swiping between
+// tabs in the app, the status bar and tab bar stay still and only the page
+// slides; the highlighted tab follows. Screens: src/data/app-screens.ts, images
+// made by `npm run screens`.
 import { APP_SCREENS } from '../data/app-screens';
 ---
 
@@ -9,6 +11,7 @@ import { APP_SCREENS } from '../data/app-screens';
   <div class="stage">
     <div class="phone">
       <div class="screen">
+        <img class="statusbar" src="/app/statusbar.webp" alt="" width="828" height="108" aria-hidden="true" />
         <div
           class="track"
           tabindex="0"
@@ -24,12 +27,19 @@ import { APP_SCREENS } from '../data/app-screens';
                   src={`/app/${s.file}`}
                   alt={s.alt}
                   width="828"
-                  height="1798"
+                  height="1512"
                   loading={i === 0 ? 'eager' : 'lazy'}
                   decoding="async"
                   draggable="false"
                 />
               </figure>
+            ))
+          }
+        </div>
+        <div class="tabbar" aria-hidden="true">
+          {
+            APP_SCREENS.map((s, i) => (
+              <img class:list={['tab', { on: i === 0 }]} src={`/app/tab-${s.file}`} alt="" width="828" height="178" data-tab={i} />
             ))
           }
         </div>
@@ -81,7 +91,8 @@ import { APP_SCREENS } from '../data/app-screens';
 
     // Load the other screens once the phone is almost in view, so a swipe never
     // lands on an empty screen (they're small: ~40 KB each).
-    const imgs = [...track.querySelectorAll('img')];
+    const imgs = [...root.querySelectorAll('img')];
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-tab]')];
     new IntersectionObserver(
       (entries, io) => {
         if (!entries.some((e) => e.isIntersecting)) return;
@@ -96,6 +107,7 @@ import { APP_SCREENS } from '../data/app-screens';
       current = i;
       title.textContent = APP_SCREENS[i].title;
       caption.textContent = APP_SCREENS[i].caption;
+      tabs.forEach((t, j) => t.classList.toggle('on', j === i));
       dots.forEach((d, j) => (j === i ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
       prev.disabled = i === 0;
       next.disabled = i === count - 1;
@@ -209,9 +221,42 @@ import { APP_SCREENS } from '../data/app-screens';
     background: #000;
     pointer-events: none;
   }
-  .track {
-    display: flex;
+  /* Status bar and tab bar sit still; only the page in between slides.
+     Heights are the parts' share of the 828 × 1798 screen. */
+  .statusbar,
+  .tabbar {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .statusbar {
+    top: 0;
+    height: calc(108 / 1798 * 100%);
+  }
+  .tabbar {
+    bottom: 0;
+    height: calc(178 / 1798 * 100%);
+  }
+  .tab {
+    position: absolute;
+    inset: 0;
+    width: 100%;
     height: 100%;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .tab.on {
+    opacity: 1;
+  }
+  .track {
+    position: absolute;
+    top: calc(108 / 1798 * 100%);
+    left: 0;
+    width: 100%;
+    height: calc(1512 / 1798 * 100%);
+    display: flex;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
