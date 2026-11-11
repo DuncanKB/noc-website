@@ -14,7 +14,7 @@ export const APP_SCREENS: AppScreen[] = [
     file: '1-home.webp',
     title: 'Home',
     caption: 'Spots to get outside, near you',
-    alt: 'The Home screen of the NOC app: a greeting, buttons for Community and Notifications, and "Near you", a list of nearby parks for a 5 km walk.',
+    alt: 'The Home screen of the NOC app: a greeting, buttons for Community and Notifications, and "Near you", a list of nearby parks in Amsterdam for a 5 km walk, such as Vondelpark and Westerpark.',
   },
   {
     file: '2-next.webp',
@@ -38,6 +38,6 @@ export const APP_SCREENS: AppScreen[] = [
     file: '5-mine.webp',
     title: 'Mine',
     caption: 'Your journal of firsts',
-    alt: 'The Mine screen: a profile with adventures, firsts and places, the current chapter "Getting moving", and a journal of outings.',
+    alt: 'The Mine screen: a profile with 64 adventures, 487.3 km, 21 firsts and 12 places, the chapter "Chasing firsts", and a journal with a 16.4 km hike that earned a first half-day hike.',
   },
 ];
