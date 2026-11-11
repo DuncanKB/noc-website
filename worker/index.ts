@@ -96,7 +96,9 @@ async function waitlist(request: Request, env: Env, url: URL, ctx: ExecutionCont
       .bind(email, new Date().toISOString())
       .run();
     // Only new addresses ping Discord; the answer doesn't wait for it.
-    if (result.meta?.changes && env.DISCORD_WEBHOOK) ctx.waitUntil(ping(env));
+    const isNew = Boolean(result.meta?.changes);
+    if (isNew && env.DISCORD_WEBHOOK) ctx.waitUntil(ping(env));
+    else console.log('waitlist: no ping', { isNew, webhookSet: Boolean(env.DISCORD_WEBHOOK) });
   } catch (err) {
     console.error('waitlist insert failed', err);
     return reply(500, 'error');
@@ -117,7 +119,10 @@ async function ping(env: Env): Promise<void> {
         allowed_mentions: { parse: [] },
       }),
     });
-    if (!res.ok) console.error('discord ping failed', res.status);
+    // Log the outcome with the webhook's id only (never its token).
+    const id = env.DISCORD_WEBHOOK!.match(/webhooks\/(\d+)/)?.[1] ?? 'not a webhook URL';
+    if (res.ok) console.log('discord ping sent', { status: res.status, webhook: id });
+    else console.error('discord ping failed', { status: res.status, webhook: id, body: (await res.text()).slice(0, 200) });
   } catch (err) {
     console.error('discord ping failed', err);
   }
