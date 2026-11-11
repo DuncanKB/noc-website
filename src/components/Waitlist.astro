@@ -25,7 +25,10 @@ const CONTACT = CONTACT_EMAIL;
       <label for="waitlist-company">Company</label>
       <input id="waitlist-company" name="company" type="text" tabindex="-1" autocomplete="off" />
     </div>
-    <button class="btn" type="submit">Notify me</button>
+    <button class="btn wl-btn" type="submit">
+      <span class="wl-label" data-label>Notify me</span>
+      <svg class="wl-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+    </button>
   </div>
   <p id="waitlist-msg" class="wl-msg" role="status" aria-live="polite"></p>
   <p id="waitlist-note" class="wl-note">
@@ -37,16 +40,29 @@ const CONTACT = CONTACT_EMAIL;
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-waitlist]');
   const msg = form?.querySelector<HTMLElement>('.wl-msg');
+  const button = form?.querySelector<HTMLButtonElement>('button');
+  const label = form?.querySelector<HTMLElement>('[data-label]');
   const say = (text: string, ok: boolean) => {
     if (!form || !msg) return;
     msg.textContent = text;
     form.classList.toggle('is-ok', ok);
     form.classList.toggle('is-error', !ok);
   };
+  // The button shows what's happening: idle → sending → done.
+  const setState = (state: 'idle' | 'sending' | 'done') => {
+    if (!form || !button || !label) return;
+    form.dataset.state = state;
+    label.textContent = state === 'sending' ? 'Sending…' : state === 'done' ? 'On the list' : 'Notify me';
+    button.disabled = state === 'sending';
+    button.setAttribute('aria-busy', String(state === 'sending'));
+  };
 
   // Result after a no-JavaScript submit.
   const result = new URLSearchParams(location.search).get('waitlist');
-  if (result === 'ok') say('You’re on the list. See you at launch.', true);
+  if (result === 'ok') {
+    say('You’re on the list. See you at launch.', true);
+    setState('done');
+  }
   if (result === 'invalid') say('That email doesn’t look right. Try again?', false);
   if (result === 'error') say('Something went wrong. Please try again in a minute.', false);
 
@@ -58,8 +74,8 @@ const CONTACT = CONTACT_EMAIL;
       input.focus();
       return;
     }
-    const button = form.querySelector<HTMLButtonElement>('button')!;
-    button.disabled = true;
+    setState('sending');
+    let done = false;
     try {
       const res = await fetch(form.action, {
         method: 'POST',
@@ -70,6 +86,7 @@ const CONTACT = CONTACT_EMAIL;
       if (res.ok && data.ok) {
         say('You’re on the list. See you at launch.', true);
         form.reset();
+        done = true;
       } else if (data.error === 'invalid') {
         say('That email doesn’t look right. Try again?', false);
       } else {
@@ -78,8 +95,13 @@ const CONTACT = CONTACT_EMAIL;
     } catch {
       say('No connection. Please try again.', false);
     } finally {
-      button.disabled = false;
+      setState(done ? 'done' : 'idle');
     }
+  });
+
+  // Typing a new address makes the button ready again.
+  form?.querySelector('input[name=email]')?.addEventListener('input', () => {
+    if (form.dataset.state === 'done') setState('idle');
   });
 </script>
 
@@ -113,7 +135,7 @@ const CONTACT = CONTACT_EMAIL;
     color: var(--placeholder);
   }
   input[type='email']:hover {
-    border-color: #777;
+    border-color: var(--stone);
   }
   input[type='email']:focus-visible {
     outline: none;
@@ -123,9 +145,67 @@ const CONTACT = CONTACT_EMAIL;
   .btn {
     min-height: 52px;
   }
-  .btn:disabled {
-    opacity: 0.6;
+  /* A steady width, so the button doesn't jump between its states. */
+  .wl-btn {
+    gap: 0;
+    min-width: 11.5em;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      transform 0.15s ease;
+  }
+  .wl-btn:disabled {
     cursor: progress;
+  }
+  [data-state='sending'] .wl-label {
+    animation: wl-pulse 1s ease-in-out infinite;
+  }
+  @keyframes wl-pulse {
+    50% {
+      opacity: 0.55;
+    }
+  }
+  .wl-check {
+    width: 0;
+    height: 1.1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    transition: width 0.3s ease;
+  }
+  /* Done: moss green (the app's success colour), a small pop, the tick draws itself. */
+  [data-state='done'] .wl-btn {
+    background: var(--moss);
+    border-color: var(--moss);
+    color: var(--page);
+    animation: wl-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  [data-state='done'] .wl-check {
+    width: 1.1em;
+    margin-left: 0.45em;
+    stroke-dashoffset: 0;
+    transition:
+      width 0.3s ease,
+      stroke-dashoffset 0.45s ease 0.15s;
+  }
+  @keyframes wl-pop {
+    40% {
+      transform: scale(1.05);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-state='sending'] .wl-label,
+    [data-state='done'] .wl-btn {
+      animation: none;
+    }
+    .wl-check,
+    [data-state='done'] .wl-check {
+      transition: none;
+    }
   }
   .wl-hp {
     position: absolute;

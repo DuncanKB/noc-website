@@ -318,6 +318,8 @@ import { APP_SCREENS } from '../data/app-screens';
     min-height: 3.2em;
   }
   .caption-text {
+    /* No lone last word on narrow screens. */
+    text-wrap: balance;
     font-family: var(--display);
     font-weight: 700;
     text-transform: uppercase;
