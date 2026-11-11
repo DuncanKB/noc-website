@@ -7,10 +7,10 @@ import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import opentype from 'opentype.js';
 
-const ORANGE = '#FF5900';
-const BLACK = '#262626';
-const ICE = '#EBECEE';
-const STONE = '#8A8C8F';
+const ORANGE = '#FD6002'; // pumpkin orange
+const BLACK = '#191C1D'; // cobalt grey
+const ICE = '#F5EEE9'; // ivory white
+const STONE = '#AAA49F'; // warm grey
 
 const root = new URL('../', import.meta.url);
 const file = (p) => fileURLToPath(new URL(p, root));
