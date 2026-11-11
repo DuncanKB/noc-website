@@ -71,21 +71,25 @@ await sharp({ create: { width: 180, height: 180, channels: 4, background: BLACK 
   .png()
   .toFile(file('public/apple-touch-icon.png'));
 
-// Social share image, 1200 x 630.
+// Social share images, 1200 x 630: English (og.png) and Dutch (og-nl.png, for /nl).
 const ogBadge = await badge.clone().resize(420, 420).toBuffer();
-const ogSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+async function shareImage(lines, address, out) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <rect width="1200" height="630" fill="${BLACK}"/>
   <rect x="0" y="0" width="12" height="630" fill="${ORANGE}"/>
   ${text(mono, 'NEVERMADE OUTDOOR CLUB', 560, 150, 24, ORANGE, { tracking: 3 })}
-  ${text(barlow, 'DO THE THINGS', 556, 260, 96, ICE)}
-  ${text(barlow, 'YOU HAVEN’T', 556, 355, 96, ICE)}
-  ${text(barlow, 'DONE YET.', 556, 450, 96, ORANGE)}
-  ${text(mono, 'NEVERMADEOUTDOORCLUB.COM', 560, 530, 22, STONE, { tracking: 2 })}
+  ${text(barlow, lines[0], 556, 260, 96, ICE)}
+  ${text(barlow, lines[1], 556, 355, 96, ICE)}
+  ${text(barlow, lines[2], 556, 450, 96, ORANGE)}
+  ${text(mono, address, 560, 530, 22, STONE, { tracking: 2 })}
 </svg>`;
-await sharp(Buffer.from(ogSvg))
-  .composite([{ input: ogBadge, left: 80, top: 105 }])
-  .png()
-  .toFile(file('public/og.png'));
+  await sharp(Buffer.from(svg))
+    .composite([{ input: ogBadge, left: 80, top: 105 }])
+    .png()
+    .toFile(file(out));
+}
+await shareImage(['DO THE THINGS', 'YOU HAVEN’T', 'DONE YET.'], 'NEVERMADEOUTDOORCLUB.COM', 'public/og.png');
+await shareImage(['DOE WAT JE', 'NOG NOOIT', 'HEBT GEDAAN.'], 'NEVERMADEOUTDOORCLUB.COM/NL', 'public/og-nl.png');
 
 console.log('images written to public/');
 
