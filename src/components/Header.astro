@@ -1,5 +1,4 @@
 ---
-import { DISCORD } from '../links';
 const home = Astro.url.pathname === '/';
 const link = (hash: string) => (home ? hash : `/${hash}`);
 ---
@@ -14,7 +13,7 @@ const link = (hash: string) => (home ? hash : `/${hash}`);
       <ul>
         <li class="hide-sm"><a href={link('#story')}>How it works</a></li>
         <li class="hide-sm"><a href={link('#app')}>The app</a></li>
-        <li><a class="btn btn-small" href={DISCORD} rel="noopener">Join</a></li>
+        <li><a class="btn btn-small" href={link('#waitlist')}>Get the app</a></li>
       </ul>
     </nav>
   </div>
