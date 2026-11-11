@@ -352,11 +352,7 @@ body::after {
   font-weight: 700;
   font-size: 30vw;
   line-height: 0.72;
-  color: transparent;
-  -webkit-text-stroke: 1.5px #444;
-  background: linear-gradient(to top, rgb(255 89 0 / 0.35), transparent 70%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  color: var(--orange);
   user-select: none;
   translate: 0 18%;
 }
