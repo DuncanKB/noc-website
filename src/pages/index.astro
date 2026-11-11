@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import { DISCORD, INSTAGRAM, INSTAGRAM_HANDLE } from '../links';
 import Waitlist from '../components/Waitlist.astro';
 import AppShowcase from '../components/AppShowcase.astro';
+import ContourBackdrop from '../components/ContourBackdrop.astro';
 
 const manifesto =
   'Ever slept under the stars? Stood on a summit at sunrise? NOC counts the things you’ve never done before, and finds you the people to do them with.';
@@ -216,6 +217,7 @@ const RIDGE_BACK =
 
   <!-- Join -->
   <section id="join" class="join" aria-labelledby="join-title">
+    <ContourBackdrop />
     <div class="wrap">
       <p class="label label-orange">(05) Join the club</p>
       <h2 id="join-title" class="join-title">
