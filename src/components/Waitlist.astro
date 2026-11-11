@@ -102,7 +102,7 @@ const CONTACT = CONTACT_EMAIL;
     min-height: 52px;
     padding: 0 20px;
     border-radius: 999px;
-    border: 1.5px solid #5a5a5a;
+    border: 1.5px solid var(--control);
     background: var(--surface);
     color: var(--ice);
     font: inherit;
@@ -110,7 +110,7 @@ const CONTACT = CONTACT_EMAIL;
     transition: border-color 0.2s ease;
   }
   input[type='email']::placeholder {
-    color: #8e9093;
+    color: var(--placeholder);
   }
   input[type='email']:hover {
     border-color: #777;
@@ -118,7 +118,7 @@ const CONTACT = CONTACT_EMAIL;
   input[type='email']:focus-visible {
     outline: none;
     border-color: var(--orange);
-    box-shadow: 0 0 0 4px rgb(255 89 0 / 0.25);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--orange) 25%, transparent);
   }
   .btn {
     min-height: 52px;
@@ -139,10 +139,10 @@ const CONTACT = CONTACT_EMAIL;
     font-weight: 500;
   }
   .is-ok .wl-msg {
-    color: #a6d13a;
+    color: var(--ok);
   }
   .is-error .wl-msg {
-    color: #ff8a4d;
+    color: var(--warn);
   }
   .wl-note {
     font-size: 0.85rem;

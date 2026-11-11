@@ -10,6 +10,25 @@
   --stone-text: #a4a6a9; /* summit stone lifted to pass contrast at small sizes */
   --moss: #739912; /* volcanic moss */
 
+  /* Derived shades: everything else on the site is built from the colours above. */
+  --ridge-lit: color-mix(in srgb, var(--orange) 9%, var(--page)); /* sunlit back ridge */
+  --ridge-back: color-mix(in srgb, var(--ice) 2.5%, var(--page));
+  --ridge-mid: color-mix(in srgb, var(--ice) 2%, var(--page));
+  --sky-hot: color-mix(in srgb, var(--orange) 13%, var(--page)); /* sunrise glow */
+  --sky-warm: color-mix(in srgb, var(--orange) 3%, var(--page));
+  --story-warm: color-mix(in srgb, var(--orange) 3%, var(--page));
+
+  /* Greys for controls and marks (each at least 3:1 against the page where it carries meaning). */
+  --dim: #737373; /* manifesto words before they light up */
+  --outline: #7a7a7a; /* outlined activity names */
+  --dot: #7d7d7d; /* inactive carousel dots */
+  --pin: #6a6a6a; /* route checkpoints not reached yet */
+  --control: #5a5a5a; /* input and button borders */
+  --card-edge: #4a4a4a;
+  --placeholder: #8e9093;
+  --ok: #a6d13a;
+  --warn: #ff8a4d;
+
   --display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
@@ -158,7 +177,7 @@ p {
   position: sticky;
   top: 0;
   z-index: 5;
-  background: rgb(38 38 38 / 0.88);
+  background: color-mix(in srgb, var(--page) 88%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);

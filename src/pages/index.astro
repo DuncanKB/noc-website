@@ -44,13 +44,13 @@ const RIDGE_BACK =
         <svg class="ridge ridge-back" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
           <defs>
             <linearGradient id="rim" x1="0" x2="1">
-              <stop offset="0" stop-color="#ff5900" stop-opacity="0.1"></stop>
-              <stop offset="0.6" stop-color="#ff5900" stop-opacity="0.95"></stop>
-              <stop offset="1" stop-color="#ff5900" stop-opacity="0.1"></stop>
+              <stop offset="0" style="stop-color: var(--orange)" stop-opacity="0.1"></stop>
+              <stop offset="0.6" style="stop-color: var(--orange)" stop-opacity="0.95"></stop>
+              <stop offset="1" style="stop-color: var(--orange)" stop-opacity="0.1"></stop>
             </linearGradient>
             <linearGradient id="backfill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#3b2e26"></stop>
-              <stop offset="0.6" stop-color="#2b2928"></stop>
+              <stop offset="0" style="stop-color: var(--ridge-lit)"></stop>
+              <stop offset="0.6" style="stop-color: var(--ridge-back)"></stop>
             </linearGradient>
           </defs>
           <path fill="url(#backfill)" d={`M0 400 ${RIDGE_BACK} L1440 400Z`}></path>
@@ -60,14 +60,14 @@ const RIDGE_BACK =
       <div class="layer" style="--depth: 0.16">
         <svg class="ridge ridge-mid" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
           <path
-            fill="#2a2928"
+            style="fill: var(--ridge-mid)"
             d="M0 400 L0 290 L120 250 L210 280 L320 220 L430 270 L540 235 L650 290 L760 240 L880 280 L990 225 L1110 275 L1220 245 L1330 285 L1440 255 L1440 400Z"
           ></path>
         </svg>
       </div>
       <svg class="ridge ridge-front" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
         <path
-          fill="#262626"
+          style="fill: var(--page)"
           d="M0 400 L0 340 L160 310 L300 345 L460 300 L620 340 L800 315 L980 350 L1150 310 L1300 335 L1440 315 L1440 400Z"
         ></path>
       </svg>
@@ -122,8 +122,8 @@ const RIDGE_BACK =
         <svg class="profile" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#ff5900" stop-opacity="0.22"></stop>
-              <stop offset="1" stop-color="#ff5900" stop-opacity="0"></stop>
+              <stop offset="0" style="stop-color: var(--orange)" stop-opacity="0.22"></stop>
+              <stop offset="1" style="stop-color: var(--orange)" stop-opacity="0"></stop>
             </linearGradient>
           </defs>
           <path d={`${PROFILE} L1000 300 L0 300Z`} fill="url(#fade)"></path>
@@ -339,7 +339,7 @@ const RIDGE_BACK =
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: radial-gradient(120% 70% at 65% 100%, #3b2418 0%, #2a2522 45%, var(--page) 78%);
+    background: radial-gradient(120% 70% at 65% 100%, var(--sky-hot) 0%, var(--sky-warm) 45%, var(--page) 78%);
   }
   .layer {
     position: absolute;
@@ -355,9 +355,9 @@ const RIDGE_BACK =
     translate: -50% 50%;
     background: radial-gradient(
       closest-side,
-      rgb(255 89 0 / 0.6),
-      rgb(255 89 0 / 0.22) 36%,
-      rgb(255 89 0 / 0.06) 62%,
+      color-mix(in srgb, var(--orange) 60%, transparent),
+      color-mix(in srgb, var(--orange) 22%, transparent) 36%,
+      color-mix(in srgb, var(--orange) 6%, transparent) 62%,
       transparent
     );
     animation:
@@ -382,7 +382,7 @@ const RIDGE_BACK =
     bottom: 22%;
     width: min(38vw, 520px);
     opacity: 0.92;
-    filter: drop-shadow(0 0 40px rgb(255 89 0 / 0.45));
+    filter: drop-shadow(0 0 40px color-mix(in srgb, var(--orange) 45%, transparent));
     translate: -50% 0;
     animation: rise 2.8s var(--ease-out) 0.1s both;
   }
@@ -541,7 +541,7 @@ const RIDGE_BACK =
   }
   .w {
     /* Dimmed until read, but still 3:1 against the page (large text). */
-    color: #737373;
+    color: var(--dim);
     transition: color 0.35s ease;
   }
   .w.lit {
@@ -557,7 +557,7 @@ const RIDGE_BACK =
   /* Story */
   .story {
     position: relative;
-    background: linear-gradient(var(--page), #2a2524 50%, var(--page));
+    background: linear-gradient(var(--page), var(--story-warm) 50%, var(--page));
   }
   .story-pin {
     padding-block: clamp(64px, 10vw, 120px);
@@ -586,7 +586,7 @@ const RIDGE_BACK =
     stroke: var(--orange);
     stroke-width: 3;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 6px rgb(255 89 0 / 0.7));
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--orange) 70%, transparent));
   }
   .pins {
     display: none;
@@ -658,7 +658,7 @@ const RIDGE_BACK =
     translate: -50% -50%;
     border-radius: 50%;
     background: var(--page);
-    border: 2px solid #6a6a6a;
+    border: 2px solid var(--pin);
     transition:
       background-color 0.3s ease,
       border-color 0.3s ease,
@@ -669,8 +669,8 @@ const RIDGE_BACK =
     background: var(--orange);
     border-color: var(--orange);
     box-shadow:
-      0 0 0 8px rgb(255 89 0 / 0.18),
-      0 0 28px rgb(255 89 0 / 0.8);
+      0 0 0 8px color-mix(in srgb, var(--orange) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--orange) 80%, transparent);
     scale: 1.15;
   }
   .pin-n {
@@ -744,7 +744,7 @@ const RIDGE_BACK =
     font-size: clamp(3rem, 9vw, 7.5rem);
     line-height: 1;
     color: transparent;
-    -webkit-text-stroke: 1.5px #7a7a7a;
+    -webkit-text-stroke: 1.5px var(--outline);
     padding-inline: 0.25em;
   }
   .peak {
@@ -881,11 +881,11 @@ const RIDGE_BACK =
   }
   @keyframes pulse {
     0% {
-      box-shadow: 0 0 0 0 rgb(115 153 18 / 0.6);
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 60%, transparent);
     }
     70%,
     100% {
-      box-shadow: 0 0 0 12px rgb(115 153 18 / 0);
+      box-shadow: 0 0 0 12px color-mix(in srgb, var(--moss) 0%, transparent);
     }
   }
   @media (max-width: 860px) {
@@ -924,7 +924,7 @@ const RIDGE_BACK =
     gap: 6px;
     padding: 28px 28px 30px;
     border-radius: 24px;
-    background: rgb(30 30 30 / 0.78);
+    background: color-mix(in srgb, var(--page) 80%, transparent);
     border: 1px solid var(--line);
     text-decoration: none;
     overflow: hidden;
