@@ -20,13 +20,13 @@ export const APP_SCREENS: AppScreen[] = [
     file: '2-next.webp',
     title: 'Next',
     caption: 'Pick your next first',
-    alt: 'The Next screen: "What will you do next?" with a chosen first, the Red Trail from Bedoń to Wiskitno, a 15 km hike, with progress towards it and a Go button.',
+    alt: 'The Next screen: "What will you do next?" with a chosen first, a 20 km hike along the Amstel from Amsterdam to Ouderkerk and back, 16.4 km best so far (82% of the way) and a Go button.',
   },
   {
     file: '3-explore.webp',
     title: 'Explore',
     caption: 'Find a place to get outside',
-    alt: 'The Explore screen: search nearby by activity (walk, run, hike, ride) and distance, and curated routes around Łódź.',
+    alt: 'The Explore screen: search nearby by activity (walk, run, hike, ride) and distance, and curated routes around Amsterdam.',
   },
   {
     file: '4-go.webp',
@@ -38,6 +38,6 @@ export const APP_SCREENS: AppScreen[] = [
     file: '5-mine.webp',
     title: 'Mine',
     caption: 'Your journal of firsts',
-    alt: 'The Mine screen: a profile with 64 adventures, 487.3 km, 21 firsts and 12 places, the chapter "Chasing firsts", and a journal with a 16.4 km hike that earned a first half-day hike.',
+    alt: 'The Mine screen: a profile from Utrecht with 64 adventures, 487.3 km, 21 firsts and 12 places, the chapter "Chasing firsts", and a journal with a 16.4 km hike near Amsterdam that earned a first half-day hike.',
   },
 ];
