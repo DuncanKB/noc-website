@@ -4,3 +4,6 @@ dist/
 .DS_Store
 .vercel/
 .wrangler/
+
+# Original app screenshots (the optimised copies are in public/app/)
+screens-src/

@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { DISCORD, INSTAGRAM, INSTAGRAM_HANDLE } from '../links';
 import Waitlist from '../components/Waitlist.astro';
+import AppShowcase from '../components/AppShowcase.astro';
 
 const manifesto =
   'Most apps ask how fast you went. We ask something else: have you ever? NOC is not about being the fastest. It counts the things you have never done before, and finds you the people to do them with.';
@@ -210,26 +211,7 @@ const RIDGE_BACK =
         <div data-reveal style="--d: 0.3s"><Waitlist /></div>
       </div>
 
-      <div class="phone-stage" aria-hidden="true" data-reveal style="--d: 0.1s">
-        <div class="phone" data-tilt>
-          <div class="phone-screen">
-            <div class="ph-top"><span>9:41</span><span class="ph-island"></span></div>
-            <p class="ph-label">My firsts</p>
-            <p class="ph-title">2 of 4 done</p>
-            <ul class="ph-list">
-              {
-                firsts.map((f, i) => (
-                  <li class:list={{ done: i < 2 }}>
-                    <span class="ph-check" />
-                    {f.title}
-                  </li>
-                ))
-              }
-            </ul>
-            <div class="ph-go">GO</div>
-          </div>
-        </div>
-      </div>
+      <div class="app-visual" data-reveal style="--d: 0.1s"><AppShowcase /></div>
     </div>
   </section>
 
@@ -342,23 +324,6 @@ const RIDGE_BACK =
     placePins();
     frame();
   });
-
-  // The phone leans toward the pointer.
-  const phone = document.querySelector<HTMLElement>('[data-tilt]');
-  if (phone && !reduced && matchMedia('(hover: hover)').matches) {
-    const stage = phone.parentElement!;
-    stage.addEventListener('pointermove', (e) => {
-      const r = stage.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      phone.style.setProperty('--rx', `${(-y * 10).toFixed(2)}deg`);
-      phone.style.setProperty('--ry', `${(x * 16).toFixed(2)}deg`);
-    });
-    stage.addEventListener('pointerleave', () => {
-      phone.style.removeProperty('--rx');
-      phone.style.removeProperty('--ry');
-    });
-  }
 </script>
 
 <style>
@@ -922,122 +887,6 @@ const RIDGE_BACK =
     100% {
       box-shadow: 0 0 0 12px rgb(115 153 18 / 0);
     }
-  }
-  .phone-stage {
-    position: relative;
-    display: grid;
-    place-items: center;
-    perspective: 1200px;
-    padding-block: 24px;
-  }
-  .phone-stage::before {
-    content: '';
-    position: absolute;
-    width: 95%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(closest-side, rgb(255 89 0 / 0.38), transparent);
-  }
-  .phone {
-    --rx: 4deg;
-    --ry: -12deg;
-    position: relative;
-    width: min(290px, 74vw);
-    aspect-ratio: 9 / 19;
-    border-radius: 46px;
-    padding: 11px;
-    background: linear-gradient(145deg, #5a5a5a, #1a1a1a 60%);
-    box-shadow:
-      0 50px 90px -25px rgb(0 0 0 / 0.8),
-      inset 0 0 0 1.5px rgb(255 255 255 / 0.1);
-    transform: rotateX(var(--rx)) rotateY(var(--ry));
-    transition: transform 0.7s var(--ease-out);
-  }
-  .phone-screen {
-    height: 100%;
-    border-radius: 36px;
-    background: var(--page);
-    padding: 16px 16px 22px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .ph-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-weight: 600;
-    font-size: 0.8rem;
-    padding: 2px 8px 0;
-  }
-  .ph-island {
-    width: 80px;
-    height: 24px;
-    border-radius: 99px;
-    background: #000;
-    margin-right: 24%;
-  }
-  .ph-label {
-    margin-top: 28px;
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--orange);
-  }
-  .ph-title {
-    margin-top: 6px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 2rem;
-    text-transform: uppercase;
-    line-height: 1;
-  }
-  .ph-list {
-    list-style: none;
-    margin: 18px 0 0;
-    padding: 0;
-    display: grid;
-    gap: 8px;
-  }
-  .ph-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 12px;
-    background: var(--surface);
-    font-family: var(--display);
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 1.05rem;
-    line-height: 1;
-  }
-  .ph-check {
-    flex: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid var(--stone);
-  }
-  .ph-list .done .ph-check {
-    background: var(--orange);
-    border-color: var(--orange);
-  }
-  .ph-go {
-    margin-top: auto;
-    align-self: center;
-    display: grid;
-    place-items: center;
-    width: 74px;
-    height: 74px;
-    border-radius: 50%;
-    background: var(--orange);
-    color: var(--page);
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 1.6rem;
-    box-shadow: 0 0 0 10px rgb(255 89 0 / 0.15);
   }
   @media (max-width: 860px) {
     .app-grid {
