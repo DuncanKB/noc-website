@@ -43,7 +43,6 @@ import { APP_SCREENS } from '../data/app-screens';
             ))
           }
         </div>
-        <span class="island" aria-hidden="true"></span>
       </div>
     </div>
   </div>
@@ -199,17 +198,6 @@ import { APP_SCREENS } from '../data/app-screens';
     overflow: hidden;
     background: var(--page);
     isolation: isolate;
-  }
-  .island {
-    position: absolute;
-    top: 2.2%;
-    left: 50%;
-    translate: -50% 0;
-    width: 31%;
-    height: 4.2%;
-    border-radius: 99px;
-    background: #000;
-    pointer-events: none;
   }
   /* Status bar and tab bar sit still; only the page in between slides.
      Heights are the parts' share of the 828 × 1798 screen. */
