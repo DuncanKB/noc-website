@@ -2,7 +2,7 @@
 // Files live in public/app/ (made from iPhone screenshots in screens-src/ by
 // `npm run screens`). `alt` describes the screen for people who can't see it;
 // keep it true to the image.
-// (Next is out for now: the new-colour screenshot of it is still to come.)
+// Next is the old-palette screenshot recoloured to the new palette (no fresh one yet).
 export interface AppScreen {
   file: string;
   title: string;
@@ -16,6 +16,12 @@ export const APP_SCREENS: AppScreen[] = [
     title: 'Home',
     caption: 'Spots to get outside, near you',
     alt: 'The Home screen of the NOC app: a greeting for Noor, buttons for Community and Notifications, and "Near you", a list of nearby parks in Amsterdam for a 5 km walk, such as Vondelpark and Westerpark.',
+  },
+  {
+    file: '2-next.webp',
+    title: 'Next',
+    caption: 'Pick your next first',
+    alt: 'The Next screen: "What will you do next?" with a chosen first, a 20 km hike along the Amstel from Amsterdam to Ouderkerk and back, 16.4 km best so far (82% of the way) and a Go button.',
   },
   {
     file: '3-explore.webp',
