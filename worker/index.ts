@@ -41,9 +41,28 @@ export default {
       return waitlist(request, env, url, ctx);
     }
 
-    return env.ASSETS.fetch(request);
+    return secure(await env.ASSETS.fetch(request));
   },
 };
+
+// Standard browser safety headers on every page and file: HTTPS only, no
+// framing by other sites, no MIME sniffing, and only the origin sent along
+// when someone follows a link away.
+const SECURITY_HEADERS: Record<string, string> = {
+  'strict-transport-security': 'max-age=31536000; includeSubDomains',
+  'x-content-type-options': 'nosniff',
+  'x-frame-options': 'DENY',
+  'content-security-policy': "frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+  'referrer-policy': 'strict-origin-when-cross-origin',
+  'cross-origin-opener-policy': 'same-origin',
+  'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+};
+
+function secure(res: Response): Response {
+  const out = new Response(res.body, res);
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) out.headers.set(k, v);
+  return out;
+}
 
 async function waitlist(request: Request, env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
   const wantsJson = (request.headers.get('accept') ?? '').includes('application/json');
