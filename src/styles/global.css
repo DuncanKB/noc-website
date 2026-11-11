@@ -1,13 +1,17 @@
-/* NEVERMADE OUTDOOR CLUB — volcanic palette from the app (lib/app-style.ts, dark). */
+/* NEVERMADE OUTDOOR CLUB — palette: cobalt grey, ivory white, pumpkin orange.
+   The previous volcanic palette (as in the app's lib/app-style.ts) was:
+   orange #ff5900 · page #262626 · surface #303030 · raised #3a3a3a · line #414141
+   ice #ebecee · stone #8a8c8f · stone-text #a4a6a9 · dim #737373 · outline #7a7a7a
+   dot #7d7d7d · pin #6a6a6a · control #5a5a5a · card-edge #4a4a4a · placeholder #8e9093 */
 :root {
-  --orange: #ff5900; /* molten orange, the single accent */
-  --page: #262626; /* magma black */
-  --surface: #303030;
-  --raised: #3a3a3a;
-  --line: #414141;
-  --ice: #ebecee; /* alpine ice, text */
-  --stone: #8a8c8f; /* summit stone: large text and marks only */
-  --stone-text: #a4a6a9; /* summit stone lifted to pass contrast at small sizes */
+  --orange: #fd6002; /* pumpkin orange, the single accent */
+  --page: #191c1d; /* cobalt grey */
+  --surface: #212628;
+  --raised: #2a3033;
+  --line: #343b3e;
+  --ice: #f5eee9; /* ivory white, text */
+  --stone: #8f8a85; /* warm grey: large text and marks only */
+  --stone-text: #aaa49f; /* warm grey for small text (6.9:1 on the page) */
   --moss: #739912; /* volcanic moss */
 
   /* Derived shades: everything else on the site is built from the colours above. */
@@ -19,13 +23,13 @@
   --story-warm: color-mix(in srgb, var(--orange) 3%, var(--page));
 
   /* Greys for controls and marks (each at least 3:1 against the page where it carries meaning). */
-  --dim: #737373; /* manifesto words before they light up */
-  --outline: #7a7a7a; /* outlined activity names */
-  --dot: #7d7d7d; /* inactive carousel dots */
-  --pin: #6a6a6a; /* route checkpoints not reached yet */
-  --control: #5a5a5a; /* input and button borders */
-  --card-edge: #4a4a4a;
-  --placeholder: #8e9093;
+  --dim: #6e6a67; /* manifesto words before they light up (3.2:1) */
+  --outline: #78736f; /* outlined activity names (3.7:1) */
+  --dot: #7b7773; /* inactive carousel dots (3.9:1) */
+  --pin: #686d6f; /* route checkpoints not reached yet (3.3:1) */
+  --control: #4b5254; /* input and button borders */
+  --card-edge: #3a4144;
+  --placeholder: #938e89; /* 4.7:1 in the input */
   --ok: #a6d13a;
   --warn: #ff8a4d;
 
