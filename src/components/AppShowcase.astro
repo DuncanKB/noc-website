@@ -182,16 +182,6 @@ import { APP_SCREENS } from '../data/app-screens';
     place-items: center;
     padding-block: 12px;
   }
-  /* Warm glow behind the phone. */
-  .stage::before {
-    content: '';
-    position: absolute;
-    width: 115%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(closest-side, rgb(255 89 0 / 0.35), transparent);
-    pointer-events: none;
-  }
   .phone {
     position: relative;
     width: min(300px, 72vw);

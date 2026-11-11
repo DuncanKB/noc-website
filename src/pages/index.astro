@@ -5,7 +5,7 @@ import Waitlist from '../components/Waitlist.astro';
 import AppShowcase from '../components/AppShowcase.astro';
 
 const manifesto =
-  'Most apps ask how fast you went. We ask something else: have you ever? NOC is not about being the fastest. It counts the things you have never done before, and finds you the people to do them with.';
+  'Ever slept under the stars? Stood on a summit at sunrise? NOC counts the things you’ve never done before, and finds you the people to do them with.';
 
 const firsts = [
   { tag: 'Up', title: 'First summit', line: 'The one where the view finally explains the climb.' },
@@ -75,7 +75,6 @@ const RIDGE_BACK =
 
     <div class="wrap hero-content">
       <div>
-        <p class="label label-orange kicker">NEVERMADE OUTDOOR CLUB · NOC</p>
         <h1 id="hero-title" class="motto">
           <span class="line"><span style="--i: 0">Do the things</span></span>
           <span class="line"><span style="--i: 1">you haven’t</span></span>
@@ -84,12 +83,12 @@ const RIDGE_BACK =
       </div>
       <div class="hero-foot">
         <p class="lede">
-          An outdoor app and community for chasing your firsts. Not your fastest time. Not your ranking. The summit
-          you’ve never stood on.
+          An outdoor app and community for chasing your firsts: the summit you’ve never stood on, the trail you’ve
+          never run, the night you’ve never spent outside.
         </p>
         <div class="cta-row">
           <a class="btn" href={DISCORD} rel="noopener">Join the Discord</a>
-          <a class="btn btn-ghost" href="#story">See the idea</a>
+          <a class="btn btn-ghost" href="#story">How it works</a>
         </div>
       </div>
     </div>
@@ -103,7 +102,7 @@ const RIDGE_BACK =
         {
           manifesto.split(' ').map((w) => (
             <>
-              <span class:list={['w', { hot: /ever\?|fastest\.|never/.test(w) }]}>{w}</span>{' '}
+              <span class:list={['w', { hot: /^(stars\?|sunrise\?|never)$/.test(w) }]}>{w}</span>{' '}
             </>
           ))
         }
@@ -165,7 +164,7 @@ const RIDGE_BACK =
               {activities.map((a) => (
                 <>
                   <span>{a.name}</span>
-                  <i>✶</i>
+                  <svg class="peak" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 L12 6 L21 18" /></svg>
                 </>
               ))}
             </span>
@@ -175,13 +174,13 @@ const RIDGE_BACK =
     </div>
     <div class="wrap">
       <div class="act-head">
-        <p class="label label-orange" data-reveal>(03) Outside, your way</p>
-        <h2 id="act-title" class="section-title" data-reveal style="--d: 0.08s">Five ways to find a first.</h2>
+        <p class="label label-orange">(03) Outside, your way</p>
+        <h2 id="act-title" class="section-title">Five ways to find a first.</h2>
       </div>
       <ol class="act-list">
         {
           activities.map((a, i) => (
-            <li class="act" data-reveal style={`--d: ${i * 0.06}s`}>
+            <li class="act">
               <span class="label act-n">0{i + 1}</span>
               <h3 class="act-name">{a.name}</h3>
               <p class="act-line">{a.line}</p>
@@ -196,44 +195,43 @@ const RIDGE_BACK =
   <section id="app" class="app" aria-labelledby="app-title">
     <div class="wrap app-grid">
       <div class="app-copy">
-        <p class="label label-orange" data-reveal>(04) The app</p>
-        <h2 id="app-title" class="section-title" data-reveal style="--d: 0.08s">Being built. Right now.</h2>
-        <p class="app-text" data-reveal style="--d: 0.16s">
+        <p class="label label-orange">(04) The app</p>
+        <h2 id="app-title" class="section-title">Being built. Right now.</h2>
+        <p class="app-text">
           Record outings with GPS, collect your firsts, follow friends and share what you did. Coming to iPhone first,
           with Android after that. Later there will also be NOC+, an optional membership with extras; the details
           aren’t final yet, and the Discord hears first.
         </p>
-        <ul class="status" aria-label="Release status" data-reveal style="--d: 0.24s">
+        <ul class="status" aria-label="Release status">
           <li><span class="dot dot-live" aria-hidden="true"></span><b>iPhone</b><span class="label">In development</span></li>
           <li><span class="dot" aria-hidden="true"></span><b>Android</b><span class="label">Later</span></li>
           <li><span class="dot" aria-hidden="true"></span><b>NOC+</b><span class="label">Planned</span></li>
         </ul>
-        <div data-reveal style="--d: 0.3s"><Waitlist /></div>
+        <div><Waitlist /></div>
       </div>
 
-      <div class="app-visual" data-reveal style="--d: 0.1s"><AppShowcase /></div>
+      <div class="app-visual"><AppShowcase /></div>
     </div>
   </section>
 
   <!-- Join -->
   <section id="join" class="join" aria-labelledby="join-title">
-    <div class="join-glow" aria-hidden="true"></div>
     <div class="wrap">
-      <p class="label label-orange" data-reveal>(05) Join the club</p>
-      <h2 id="join-title" class="join-title" data-reveal style="--d: 0.08s">
+      <p class="label label-orange">(05) Join the club</p>
+      <h2 id="join-title" class="join-title">
         Come along<br />before the<br /><span class="accent">app does.</span>
       </h2>
-      <p class="join-lede" data-reveal style="--d: 0.16s">
+      <p class="join-lede">
         Swap plans, find people to go with, follow the app being built and help shape it.
       </p>
       <div class="join-cards">
-        <a class="join-card" href={DISCORD} rel="noopener" data-reveal style="--d: 0.2s">
+        <a class="join-card" href={DISCORD} rel="noopener">
           <span class="label label-orange">Community</span>
           <span class="join-name">Discord</span>
           <span class="join-sub">Join the NOC server</span>
           <span class="join-arrow" aria-hidden="true">↗</span>
         </a>
-        <a class="join-card" href={INSTAGRAM} rel="noopener" data-reveal style="--d: 0.28s">
+        <a class="join-card" href={INSTAGRAM} rel="noopener">
           <span class="label label-orange">Follow</span>
           <span class="join-name">Instagram</span>
           <span class="join-sub">{INSTAGRAM_HANDLE}</span>
@@ -439,9 +437,6 @@ const RIDGE_BACK =
     padding-top: calc(65px + clamp(28px, 6vh, 80px));
     padding-bottom: clamp(28px, 5vh, 56px);
   }
-  .kicker {
-    animation: fade-up 1s var(--ease-out) 0.1s both;
-  }
   .motto {
     margin-top: 18px;
     font-size: min(14.5vw, 12.5rem, 19vh);
@@ -497,7 +492,7 @@ const RIDGE_BACK =
     /* On phones the sun is placed from the top, just under the motto (whose
        height follows the screen width), so it never rises into the words. */
     .hero {
-      --sun-top: calc(65px + clamp(28px, 6vh, 80px) + 44px + 36.6vw + 28px);
+      --sun-top: calc(65px + clamp(28px, 6vh, 80px) + 24px + 36.6vw + 28px);
       --sun-size: min(56vw, 30svh, 280px);
       min-height: max(100svh, 700px);
     }
@@ -752,11 +747,16 @@ const RIDGE_BACK =
     -webkit-text-stroke: 1.5px #7a7a7a;
     padding-inline: 0.25em;
   }
-  .marquee-set i {
-    font-style: normal;
-    color: var(--orange);
-    font-size: clamp(1.4rem, 3vw, 2.4rem);
-    padding-inline: 0.25em;
+  .peak {
+    flex: none;
+    width: clamp(1.2rem, 2.6vw, 2rem);
+    height: clamp(1.2rem, 2.6vw, 2rem);
+    margin-inline: 0.35em;
+    fill: none;
+    stroke: var(--orange);
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
   @keyframes marquee {
     to {
@@ -901,12 +901,6 @@ const RIDGE_BACK =
     overflow: hidden;
     isolation: isolate;
     border-top: 1px solid var(--line);
-  }
-  .join-glow {
-    position: absolute;
-    z-index: -1;
-    inset: 0;
-    background: radial-gradient(70% 45% at 50% 78%, rgb(255 89 0 / 0.42), rgb(255 89 0 / 0.1) 55%, transparent 100%);
   }
   .join-title {
     margin-top: 18px;
