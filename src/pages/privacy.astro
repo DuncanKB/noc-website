@@ -7,7 +7,7 @@ import { CONTACT_EMAIL } from '../links';
 import Base from '../layouts/Base.astro';
 import Section from '../components/PolicySection.astro';
 
-const UPDATED = '11 November 2026'; // added: this website and the waitlist (section 10)
+const UPDATED = '12 November 2026'; // added: finding routes near you (sections 03 and 06)
 const CONTACT = CONTACT_EMAIL;
 ---
 
@@ -70,6 +70,12 @@ const CONTACT = CONTACT_EMAIL;
             trailheads nearby and to plan a route there. NEVERMADE doesn't save it.
           </li>
           <li>
+            <strong>Finding routes near you:</strong> the app sends the centre of a roughly 5 km area (never your exact
+            position) to NEVERMADE's route search, which looks up waymarked routes in OpenStreetMap. The list of routes
+            for that area is kept for 30 days so the next search there is quick; nothing about who searched is saved.
+            Distances to the routes are worked out on your phone.
+          </li>
+          <li>
             <strong>Naming your places:</strong> to show where your outings started, your phone looks up the centre
             of a roughly 5 km area, never your exact position.
           </li>
@@ -122,6 +128,15 @@ const CONTACT = CONTACT_EMAIL;
           <li>
             <strong>Mapbox</strong> receives your approximate location when you search for places nearby or plan a
             route, and shows maps. Map usage reporting (telemetry) is turned off.
+          </li>
+          <li>
+            <strong>Cloudflare</strong> runs NEVERMADE's route search (and this website). It receives the rough area
+            you search and, like any web server, your IP address with the request.
+          </li>
+          <li>
+            <strong>OpenStreetMap</strong> data comes from the Overpass API (run by FOSSGIS e.V. in Germany), which
+            our route search asks for the routes in an area. It receives that area from our server, not from your
+            phone. Tapping a route opens it on Waymarked Trails, a separate website with its own policy.
           </li>
           <li>
             <strong>Apple</strong> provides maps on iPhone, step counts (Motion &amp; Fitness) and, when available,
