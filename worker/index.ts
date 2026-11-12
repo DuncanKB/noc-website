@@ -4,11 +4,7 @@
 //  - POST /api/waitlist: stores an email address for the app-launch email, and
 //    (when the DISCORD_WEBHOOK secret is set) posts "new sign-up, N on the list"
 //    to a private Discord channel. The address itself never goes to Discord.
-//  - GET /api/routes: waymarked routes near a (rounded) point for the app's
-//    Explore tab, from OpenStreetMap, cached per area for 30 days (worker/routes.ts).
 // Export or delete the list: npm run waitlist:export / npm run waitlist:delete (scripts/waitlist.mjs).
-
-import { routes } from './routes';
 
 // Just the bits of Cloudflare's D1 API this file uses.
 interface D1Database {
@@ -44,8 +40,6 @@ export default {
       if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { allow: 'POST' } });
       return waitlist(request, env, url, ctx);
     }
-
-    if (url.pathname === '/api/routes') return routes(request, env.DB as never);
 
     return secure(await env.ASSETS.fetch(request));
   },
