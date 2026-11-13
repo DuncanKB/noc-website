@@ -12,10 +12,8 @@ import ParticleRidge from './ParticleRidge.astro';
 
 interface Props {
   lang: Lang;
-  // PREVIEW (/preview): the particle ridge hero.
-  preview?: boolean;
 }
-const { lang, preview = false } = Astro.props;
+const { lang } = Astro.props;
 
 const COPY = {
   en: {
@@ -111,58 +109,15 @@ const { manifesto, firsts, activities } = c;
 // The elevation profile the firsts story draws along (viewBox 0 0 1000 300).
 const PROFILE =
   'M0 250 C60 245 90 230 130 205 S200 120 250 95 S300 130 340 160 S420 200 470 175 S540 90 600 70 S660 110 700 150 S760 210 820 190 S900 120 940 110 S980 120 1000 125';
-const RIDGE_BACK =
-  'L0 230 L90 190 L170 215 L260 150 L330 175 L420 110 L500 160 L590 130 L680 185 L760 120 L850 60 L930 120 L1010 95 L1100 160 L1190 120 L1280 170 L1360 140 L1440 175';
 ---
 
 <Base title={c.title} description={c.description} lang={lang} translated>
-  <!-- Hero: a sunrise over volcanic ridges -->
-  <section class:list={['hero', { 'hero-particles': preview }]} aria-labelledby="hero-title" data-hero>
-    {
-      preview && (
-        <div class="sky" aria-hidden="true">
-          <div class="layer" style="--depth: 0.2">
-            <ParticleRidge />
-          </div>
-        </div>
-      )
-    }
-    <div class="sky" aria-hidden="true" hidden={preview}>
-      <div class="layer" style="--depth: 0.12"><div class="glow"></div></div>
-      <div class="layer" style="--depth: 0.5">
-        <div class="sun"><img src="/club-badge-sun.webp" alt="" width="640" height="640" fetchpriority="high" /></div>
+  <!-- Hero: a field of glowing particles forming a volcanic ridge -->
+  <section class="hero" aria-labelledby="hero-title" data-hero>
+    <div class="sky" aria-hidden="true">
+      <div class="layer" style="--depth: 0.2">
+        <ParticleRidge />
       </div>
-      <div class="layer" style="--depth: 0.28">
-        <svg class="ridge ridge-back" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
-          <defs>
-            <linearGradient id="rim" x1="0" x2="1">
-              <stop offset="0" style="stop-color: var(--orange)" stop-opacity="0.1"></stop>
-              <stop offset="0.6" style="stop-color: var(--orange)" stop-opacity="0.95"></stop>
-              <stop offset="1" style="stop-color: var(--orange)" stop-opacity="0.1"></stop>
-            </linearGradient>
-            <linearGradient id="backfill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" style="stop-color: var(--ridge-lit)"></stop>
-              <stop offset="0.6" style="stop-color: var(--ridge-back)"></stop>
-            </linearGradient>
-          </defs>
-          <path fill="url(#backfill)" d={`M0 400 ${RIDGE_BACK} L1440 400Z`}></path>
-          <path fill="none" stroke="url(#rim)" stroke-width="1.6" d={`M${RIDGE_BACK.slice(1)}`}></path>
-        </svg>
-      </div>
-      <div class="layer" style="--depth: 0.16">
-        <svg class="ridge ridge-mid" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
-          <path
-            style="fill: var(--ridge-mid)"
-            d="M0 400 L0 290 L120 250 L210 280 L320 220 L430 270 L540 235 L650 290 L760 240 L880 280 L990 225 L1110 275 L1220 245 L1330 285 L1440 255 L1440 400Z"
-          ></path>
-        </svg>
-      </div>
-      <svg class="ridge ridge-front" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMax slice">
-        <path
-          style="fill: var(--page)"
-          d="M0 400 L0 340 L160 310 L300 345 L460 300 L620 340 L800 315 L980 350 L1150 310 L1300 335 L1440 315 L1440 400Z"
-        ></path>
-      </svg>
     </div>
 
     <div class="wrap hero-content">
@@ -423,93 +378,12 @@ const RIDGE_BACK =
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: radial-gradient(120% 70% at 65% 100%, var(--sky-hot) 0%, var(--sky-warm) 45%, var(--page) 78%);
+    background: radial-gradient(110% 60% at 60% 85%, var(--sky-warm) 0%, var(--page) 70%);
   }
   .layer {
     position: absolute;
     inset: 0;
     transform: translate3d(0, calc(var(--p) * var(--depth) * 100vh), 0);
-  }
-  .glow {
-    position: absolute;
-    left: 78%;
-    bottom: 26%;
-    width: 120vmax;
-    height: 80vmax;
-    translate: -50% 50%;
-    background: radial-gradient(
-      closest-side,
-      color-mix(in srgb, var(--orange) 60%, transparent),
-      color-mix(in srgb, var(--orange) 22%, transparent) 36%,
-      color-mix(in srgb, var(--orange) 6%, transparent) 62%,
-      transparent
-    );
-    animation:
-      glow-in 2.4s var(--ease-out) both,
-      breathe 7s ease-in-out 2.4s infinite;
-  }
-  @keyframes glow-in {
-    from {
-      opacity: 0;
-      scale: 0.5;
-    }
-  }
-  @keyframes breathe {
-    50% {
-      opacity: 0.78;
-      scale: 1.06;
-    }
-  }
-  .sun {
-    position: absolute;
-    left: 78%;
-    bottom: 22%;
-    width: min(38vw, 520px);
-    opacity: 0.92;
-    filter: drop-shadow(0 0 40px color-mix(in srgb, var(--orange) 45%, transparent));
-    translate: -50% 0;
-    animation: rise 2.8s var(--ease-out) 0.1s both;
-  }
-  .sun img {
-    width: 100%;
-    animation: turn 90s linear infinite;
-  }
-  @keyframes rise {
-    from {
-      transform: translateY(70%);
-      opacity: 0;
-    }
-    35% {
-      opacity: 1;
-    }
-  }
-  @keyframes turn {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  .ridge {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-  }
-  .ridge-back {
-    height: 64%;
-    animation: ridge-in 2.2s var(--ease-out) both;
-  }
-  .ridge-mid {
-    height: 50%;
-    animation: ridge-in 2.2s var(--ease-out) 0.08s both;
-  }
-  .ridge-front {
-    height: 40%;
-    bottom: -1px;
-  }
-  @keyframes ridge-in {
-    from {
-      transform: translateY(12%);
-    }
   }
 
   .hero-content {
@@ -573,40 +447,8 @@ const RIDGE_BACK =
     gap: 12px;
   }
   @media (max-width: 760px) {
-    /* On phones the sun is placed from the top, just under the motto (whose
-       height follows the screen width), so it never rises into the words. */
     .hero {
-      --sun-top: calc(65px + clamp(28px, 6vh, 80px) + 24px + 36.6vw + 28px);
-      --sun-size: min(56vw, 30svh, 280px);
       min-height: max(100svh, 700px);
-    }
-    .glow,
-    .sun {
-      left: 50%;
-      bottom: auto;
-    }
-    .sun {
-      top: var(--sun-top);
-      width: var(--sun-size);
-    }
-    /* Keep the sun's space free, so the text below never runs over it. */
-    .hero-content > div:first-child {
-      padding-bottom: calc(var(--sun-size) + 8px);
-    }
-    .glow {
-      top: calc(var(--sun-top) + var(--sun-size) / 2);
-      width: 160vw;
-      height: 120vw;
-      translate: -50% -50%;
-    }
-    .ridge-back {
-      height: 58%;
-    }
-    .ridge-mid {
-      height: 48%;
-    }
-    .ridge-front {
-      height: 38%;
     }
   }
 
@@ -1067,19 +909,6 @@ const RIDGE_BACK =
   }
   .join-card:focus-visible {
     outline-color: var(--ice);
-  }
-
-  /* PREVIEW: the particle hero has no sun, so the motto needs no room for it. */
-  .hero-particles .sky {
-    background: radial-gradient(110% 60% at 60% 85%, var(--sky-warm) 0%, var(--page) 70%);
-  }
-  .sky[hidden] {
-    display: none;
-  }
-  @media (max-width: 760px) {
-    .hero-particles .hero-content > div:first-child {
-      padding-bottom: 0;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
