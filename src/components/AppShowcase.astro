@@ -12,11 +12,18 @@ interface Props {
 }
 const { lang = 'en' } = Astro.props;
 const t = UI[lang].showcase;
+// The phone body's depth: thin slices behind the front, like a real iPhone's edge.
+const EDGE = Array.from({ length: 18 }, (_, i) => i + 1);
 ---
 
 <div class="showcase" data-showcase>
   <div class="stage" data-stage>
     <div class="phone">
+      {EDGE.map((z) => <span class="edge" style={`--z: ${z}`} aria-hidden="true" />)}
+      <span class="key key-action" aria-hidden="true"></span>
+      <span class="key key-up" aria-hidden="true"></span>
+      <span class="key key-down" aria-hidden="true"></span>
+      <span class="key key-side" aria-hidden="true"></span>
       <span class="echo echo-2" aria-hidden="true"></span>
       <span class="echo echo-1" aria-hidden="true"></span>
       <span class="glare" aria-hidden="true"></span>
@@ -269,8 +276,8 @@ const t = UI[lang].showcase;
     padding-block: 12px;
   }
   .phone {
-    transform: translateY(calc(var(--away) * 90px)) rotateX(calc(var(--away) * 26deg + var(--my) * -6deg))
-      rotateY(calc(var(--away) * -32deg - 6deg + var(--mx) * 9deg)) rotateZ(calc(var(--away) * 6deg))
+    transform: translateY(calc(var(--away) * 90px)) rotateX(calc(var(--away) * 26deg + 5deg + var(--my) * -12deg))
+      rotateY(calc(var(--away) * -32deg - 14deg + var(--mx) * 20deg)) rotateZ(calc(var(--away) * 6deg))
       scale(calc(0.86 + var(--a) * 0.14));
     transition: transform 0.35s var(--ease-out);
     transform-style: preserve-3d;
@@ -279,9 +286,52 @@ const t = UI[lang].showcase;
     padding: 11px;
     border-radius: 50px;
     background: linear-gradient(145deg, #5a5a5a, #1a1a1a 60%);
-    box-shadow:
-      0 50px 90px -25px rgb(0 0 0 / 0.8),
-      inset 0 0 0 1.5px rgb(255 255 255 / 0.1);
+    box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.1);
+  }
+  /* The edge: slices of titanium-grey stacked behind the front. Only their rims
+     show, so together they read as the phone's rounded side. */
+  .edge {
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    transform: translateZ(calc(var(--z) * -1.5px));
+    background: linear-gradient(90deg, #9a9a9a, #3c3c3c 12%, #262626 50%, #3c3c3c 88%, #9a9a9a);
+    pointer-events: none;
+  }
+  /* The back slice carries the shadow on the page. */
+  .edge:nth-of-type(18) {
+    box-shadow: 0 50px 90px -25px rgb(0 0 0 / 0.8);
+  }
+  /* Buttons on the sides, halfway into the depth. */
+  .key {
+    position: absolute;
+    width: 4px;
+    border-radius: 2px;
+    transform: translateZ(-13px);
+    background: linear-gradient(90deg, #8a8a8a, #4a4a4a);
+    pointer-events: none;
+  }
+  .key-action,
+  .key-up,
+  .key-down {
+    left: -3px;
+  }
+  .key-action {
+    top: 17%;
+    height: 5%;
+  }
+  .key-up {
+    top: 26%;
+    height: 9%;
+  }
+  .key-down {
+    top: 37%;
+    height: 9%;
+  }
+  .key-side {
+    right: -3px;
+    top: 28%;
+    height: 14%;
   }
   .screen {
     position: relative;

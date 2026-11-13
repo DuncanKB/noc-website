@@ -4,20 +4,14 @@
 // one still frame with reduced motion, pauses when off screen or in a
 // background tab, and uses fewer particles on phones. Without WebGL the hero
 // keeps its gradient sky.
-// `calm`: the slower, dimmer version that closes the page.
-interface Props {
-  calm?: boolean;
-}
-const { calm = false } = Astro.props;
 ---
 
-<canvas class="particles" data-particles data-calm={calm ? '' : undefined} aria-hidden="true"></canvas>
+<canvas class="particles" data-particles aria-hidden="true"></canvas>
 
 <script>
   for (const canvas of document.querySelectorAll<HTMLCanvasElement>('[data-particles]')) {
     const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: true });
     if (!gl) continue;
-    const calm = canvas.hasAttribute('data-calm');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const small = matchMedia('(max-width: 760px)').matches;
 
@@ -70,7 +64,6 @@ const { calm = false } = Astro.props;
       precision mediump float;
       varying float vLight;
       varying float vFade;
-      uniform float gain;
       void main() {
         vec2 p = gl_PointCoord - 0.5;
         float d = length(p);
@@ -78,7 +71,7 @@ const { calm = false } = Astro.props;
         vec3 orange = vec3(0.992, 0.376, 0.008);   // #fd6002
         vec3 hot = vec3(1.0, 0.78, 0.55);
         vec3 col = mix(orange, hot, vLight * vLight * 0.7);
-        float a = min(1.0, dot * vFade * (0.4 + 1.4 * vLight)) * gain;
+        float a = min(1.0, dot * vFade * (0.4 + 1.4 * vLight));
         gl_FragColor = vec4(col * a, a);
       }`;
 
@@ -118,8 +111,6 @@ const { calm = false } = Astro.props;
       const uT = gl.getUniformLocation(prog, 't');
       const uAspect = gl.getUniformLocation(prog, 'aspect');
       const uDpr = gl.getUniformLocation(prog, 'dpr');
-      gl.uniform1f(gl.getUniformLocation(prog, 'gain'), calm ? 0.7 : 1);
-      const speed = calm ? 0.5 : 1;
 
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.ONE, gl.ONE); // additive: overlapping dots glow
@@ -137,7 +128,7 @@ const { calm = false } = Astro.props;
       };
 
       const draw = (time: number) => {
-        gl.uniform1f(uT, (time / 1000) * speed);
+        gl.uniform1f(uT, time / 1000);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.POINTS, 0, cols * rows);
       };
