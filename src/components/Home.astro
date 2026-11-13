@@ -4,7 +4,7 @@
 // two languages saying the same thing.
 import Base from '../layouts/Base.astro';
 import { DISCORD, INSTAGRAM, INSTAGRAM_HANDLE } from '../links';
-import type { Lang } from '../i18n';
+import { UI, type Lang } from '../i18n';
 import Waitlist from './Waitlist.astro';
 import AppShowcase from './AppShowcase.astro';
 import ContourBackdrop from './ContourBackdrop.astro';
@@ -139,7 +139,8 @@ const { manifesto, firsts, activities } = c;
       <div class="hero-foot">
         <p class="lede">{c.lede}</p>
         <div class="hero-signup">
-          <Waitlist lang={lang} place="hero" />
+          <p class="label label-orange">{UI[lang].waitlist.label}</p>
+          <a class="btn" href="#waitlist">{UI[lang].getTheApp}</a>
           <a class="quiet-link" href={DISCORD} rel="noopener">{c.discord} <span aria-hidden="true">↗</span></a>
         </div>
       </div>
@@ -401,14 +402,9 @@ const { manifesto, firsts, activities } = c;
     text-shadow: 0 1px 14px rgb(0 0 0 / 0.6);
   }
   .hero-signup {
-    flex: 0 1 30rem;
     display: grid;
-    gap: 14px;
+    gap: 12px;
     justify-items: start;
-  }
-  .hero-signup :global(.waitlist) {
-    margin-top: 0;
-    width: 100%;
   }
   .quiet-link {
     display: inline-flex;

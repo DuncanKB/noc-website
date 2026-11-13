@@ -4,23 +4,21 @@ import { HOME, UI, type Lang } from '../i18n';
 // "Tell me when the app is out": one email field. Posts to /api/waitlist
 // (worker/index.ts). Works without JavaScript too (the server redirects back
 // with ?waitlist=ok / ?waitlist=error); with JavaScript it answers in place.
-// It's the site's one main action: at the top (place="hero") and at the end
-// of the home page (#waitlist, where the header button and a no-JavaScript
-// submit lead).
+// It's the site's one main action, at the end of the home page (#waitlist):
+// the header and hero buttons and a no-JavaScript submit lead there.
 const CONTACT = CONTACT_EMAIL;
 
 interface Props {
   lang?: Lang;
-  place?: 'hero' | 'end';
 }
-const { lang = 'en', place = 'end' } = Astro.props;
-const id = place === 'end' ? 'waitlist' : `waitlist-${place}`;
+const { lang = 'en' } = Astro.props;
+const id = 'waitlist';
 const t = UI[lang].waitlist;
 ---
 
 <form
   id={id}
-  class:list={['waitlist', `waitlist-${place}`]}
+  class="waitlist"
   action="/api/waitlist"
   method="post"
   data-waitlist
