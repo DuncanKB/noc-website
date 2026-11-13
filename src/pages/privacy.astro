@@ -7,7 +7,7 @@ import { CONTACT_EMAIL } from '../links';
 import Base from '../layouts/Base.astro';
 import Section from '../components/PolicySection.astro';
 
-const UPDATED = '12 November 2026'; // added: finding routes near you (sections 03 and 06)
+const UPDATED = '13 November 2026'; // added: a route's climb from Open-Meteo, routes saved for later (sections 03 and 06)
 const CONTACT = CONTACT_EMAIL;
 ---
 
@@ -74,7 +74,9 @@ const CONTACT = CONTACT_EMAIL;
             position) to OpenStreetMap's route search to look up waymarked routes there. The list of routes for that
             area is kept on your phone for 30 days, so the next search there is quick. Distances to the routes are
             worked out on your phone. When you open a route, the app asks OpenStreetMap for that route's line using
-            only the route's number, not your location, and keeps the line on your phone for 30 days.
+            only the route's number, not your location, and keeps the line on your phone for 30 days. For the route's
+            climb, 100 points along that route (not your location) are sent to Open-Meteo for their heights, also kept
+            on your phone for 30 days. Routes you save for later stay on your phone only.
           </li>
           <li>
             <strong>Naming your places:</strong> to show where your outings started, your phone looks up the centre
@@ -136,6 +138,10 @@ const CONTACT = CONTACT_EMAIL;
             receives that route's number. Like any web server, it also sees your IP address with each request. Long
             national routes, and the route details link, open on Waymarked Trails, a separate website with its own
             policy.
+          </li>
+          <li>
+            <strong>Open-Meteo</strong> (Switzerland) gives the heights for a route's climb. It receives points along
+            the route you open, never your own position; like any web server, it also sees your IP address.
           </li>
           <li>
             <strong>Apple</strong> provides maps on iPhone, step counts (Motion &amp; Fitness) and, when available,
