@@ -262,6 +262,11 @@ const { manifesto, firsts, activities } = c;
         </a>
       </div>
     </div>
+    <!-- The page ends as it began: the ridge, with the sun going down behind it. -->
+    <div class="sunset" aria-hidden="true" data-sunset>
+      <div class="sunset-sky"><div class="sunset-sun"></div></div>
+      <ParticleRidge calm />
+    </div>
   </section>
 </Base>
 
@@ -281,6 +286,7 @@ const { manifesto, firsts, activities } = c;
   const manifesto = document.querySelector<HTMLElement>('[data-manifesto]');
   const words = manifesto ? [...manifesto.querySelectorAll<HTMLElement>('.w')] : [];
   const story = document.querySelector<HTMLElement>('[data-story]');
+  const sunset = document.querySelector<HTMLElement>('[data-sunset]');
   const pins = story ? [...story.querySelectorAll<HTMLElement>('[data-pin]')] : [];
   const items = story ? [...story.querySelectorAll<HTMLElement>('[data-first]')] : [];
   const STOPS = [0.2, 0.45, 0.68, 0.92];
@@ -291,6 +297,12 @@ const { manifesto, firsts, activities } = c;
   const frame = () => {
     ticking = false;
     if (hero && !reduced) hero.style.setProperty('--p', progress(hero, 0, -1).toFixed(4));
+    // The sun sets between the band coming into view and the very end of the page.
+    if (sunset && !reduced) {
+      const enter = sunset.getBoundingClientRect().top + scrollY - innerHeight;
+      const end = document.documentElement.scrollHeight - innerHeight;
+      sunset.style.setProperty('--set', clamp((scrollY - enter) / Math.max(1, end - enter)).toFixed(4));
+    }
 
     if (words.length && manifesto) {
       const lit = reduced ? words.length : Math.round(progress(manifesto, 0.9, 0.45) * words.length * 1.08);
@@ -734,6 +746,35 @@ const { manifesto, firsts, activities } = c;
     isolation: isolate;
     border-top: 1px solid var(--line);
   }
+  /* The sunset band closing the page. */
+  .join {
+    padding-bottom: 0;
+  }
+  .sunset {
+    --set: 0.6;
+    position: relative;
+    height: clamp(260px, 46vh, 460px);
+    margin-top: clamp(48px, 8vw, 96px);
+  }
+  .sunset-sky {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    /* The sun disappears behind the ridge line. */
+    mask-image: linear-gradient(black 42%, transparent 56%);
+  }
+  .sunset-sun {
+    position: absolute;
+    left: 62%;
+    top: 34%;
+    width: min(40vw, 340px);
+    aspect-ratio: 1;
+    translate: -50% calc(-50% + var(--set) * 32%);
+    border-radius: 50%;
+    background: radial-gradient(closest-side, #ffd9b0, var(--orange) 38%, color-mix(in srgb, var(--orange) 30%, transparent) 62%, transparent);
+    opacity: calc(1 - var(--set) * 0.35);
+  }
+
   .join-title {
     margin-top: 18px;
     font-size: clamp(3.4rem, 11vw, 10rem);

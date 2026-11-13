@@ -15,8 +15,11 @@ const t = UI[lang].showcase;
 ---
 
 <div class="showcase" data-showcase>
-  <div class="stage">
+  <div class="stage" data-stage>
     <div class="phone">
+      <span class="echo echo-2" aria-hidden="true"></span>
+      <span class="echo echo-1" aria-hidden="true"></span>
+      <span class="glare" aria-hidden="true"></span>
       <div class="screen">
         <img class="statusbar" src="/app/statusbar.webp" alt="" width="828" height="108" aria-hidden="true" />
         <div
@@ -174,22 +177,103 @@ const t = UI[lang].showcase;
     };
     track.addEventListener('pointerup', endDrag);
     track.addEventListener('pointercancel', endDrag);
+
+    // The phone arrives in 3D as the section scrolls in (--a: 0 → 1), and
+    // leans toward a mouse pointer (--mx, --my: -1 → 1).
+    const stage = root.querySelector<HTMLElement>('[data-stage]')!;
+    if (reduced) {
+      stage.style.setProperty('--a', '1');
+    } else {
+      let ticking = false;
+      const arrive = () => {
+        ticking = false;
+        const r = stage.getBoundingClientRect();
+        const a = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight * 0.55 + r.height * 0.5)));
+        stage.style.setProperty('--a', a.toFixed(4));
+      };
+      addEventListener(
+        'scroll',
+        () => {
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(arrive);
+          }
+        },
+        { passive: true },
+      );
+      arrive();
+      if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        stage.addEventListener('pointermove', (e) => {
+          const r = stage.getBoundingClientRect();
+          stage.style.setProperty('--mx', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+          stage.style.setProperty('--my', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+        });
+        stage.addEventListener('pointerleave', () => {
+          stage.style.setProperty('--mx', '0');
+          stage.style.setProperty('--my', '0');
+        });
+      }
+    }
   }
 </script>
 
 <style>
+  /* Echoes: two orange outlines of the phone stacked behind it in depth. They
+     fan out while the phone is turned away and fold into it as it arrives. */
+  .echo {
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    border: 1.5px solid var(--orange);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--orange) 45%, transparent);
+    pointer-events: none;
+  }
+  .echo-1 {
+    transform: translateZ(calc(var(--away) * -170px - 1px));
+    opacity: calc(var(--away) * 0.75);
+  }
+  .echo-2 {
+    transform: translateZ(calc(var(--away) * -340px - 2px));
+    opacity: calc(var(--away) * 0.4);
+  }
+  /* Light catching the glass, moving with the tilt. */
+  .glare {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: 50px;
+    pointer-events: none;
+    background: linear-gradient(
+      calc(115deg + var(--mx) * 20deg),
+      transparent 30%,
+      rgb(255 255 255 / calc(0.05 + var(--a) * 0.05)) 45%,
+      transparent 60%
+    );
+    background-size: 100% 200%;
+    background-position: 0 calc(50% + var(--my) * 30% + var(--away) * 60%);
+  }
   .showcase {
     display: grid;
     justify-items: center;
     gap: 18px;
   }
   .stage {
+    --a: 0;
+    --mx: 0;
+    --my: 0;
+    --away: calc(1 - var(--a));
+    perspective: 1100px;
     position: relative;
     display: grid;
     place-items: center;
     padding-block: 12px;
   }
   .phone {
+    transform: translateY(calc(var(--away) * 90px)) rotateX(calc(var(--away) * 26deg + var(--my) * -6deg))
+      rotateY(calc(var(--away) * -32deg - 6deg + var(--mx) * 9deg)) rotateZ(calc(var(--away) * 6deg))
+      scale(calc(0.86 + var(--a) * 0.14));
+    transition: transform 0.35s var(--ease-out);
+    transform-style: preserve-3d;
     position: relative;
     width: min(300px, 72vw);
     padding: 11px;
