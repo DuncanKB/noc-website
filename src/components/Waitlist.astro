@@ -4,18 +4,22 @@ import { HOME, UI, type Lang } from '../i18n';
 // "Tell me when the app is out": one email field. Posts to /api/waitlist
 // (worker/index.ts). Works without JavaScript too (the server redirects back
 // with ?waitlist=ok / ?waitlist=error); with JavaScript it answers in place.
+// It's the site's one main action, so it appears in a few places: `place`
+// keeps their ids apart (#waitlist is the one in the app section).
 const CONTACT = CONTACT_EMAIL;
 
 interface Props {
   lang?: Lang;
+  place?: 'app' | 'hero' | 'join';
 }
-const { lang = 'en' } = Astro.props;
+const { lang = 'en', place = 'app' } = Astro.props;
+const id = place === 'app' ? 'waitlist' : `waitlist-${place}`;
 const t = UI[lang].waitlist;
 ---
 
 <form
-  id="waitlist"
-  class="waitlist"
+  id={id}
+  class:list={['waitlist', `waitlist-${place}`]}
   action="/api/waitlist"
   method="post"
   data-waitlist
@@ -28,12 +32,13 @@ const t = UI[lang].waitlist;
   data-offline={t.offline}
   novalidate
 >
-  <label class="label label-orange" for="waitlist-email">{t.label}</label>
+  <p class="label label-orange wl-kicker">{t.label}</p>
+  <label class="sr-only" for={`${id}-email`}>{t.email}</label>
   <!-- Where to come back to after a no-JavaScript submit. -->
   <input type="hidden" name="from" value={HOME[lang]} />
   <div class="wl-row">
     <input
-      id="waitlist-email"
+      id={`${id}-email`}
       name="email"
       type="email"
       inputmode="email"
@@ -41,95 +46,100 @@ const t = UI[lang].waitlist;
       required
       maxlength="254"
       placeholder={t.placeholder}
-      aria-describedby="waitlist-note waitlist-msg"
+      aria-describedby={`${id}-note ${id}-msg`}
     />
     <!-- Bots fill every field; people never see this one. -->
     <div class="wl-hp" aria-hidden="true">
-      <label for="waitlist-company">Company</label>
-      <input id="waitlist-company" name="company" type="text" tabindex="-1" autocomplete="off" />
+      <label for={`${id}-company`}>Company</label>
+      <input id={`${id}-company`} name="company" type="text" tabindex="-1" autocomplete="off" />
     </div>
     <button class="btn wl-btn" type="submit">
       <span class="wl-label" data-label>{t.idle}</span>
       <svg class="wl-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
     </button>
   </div>
-  <p id="waitlist-msg" class="wl-msg" role="status" aria-live="polite"></p>
-  <p id="waitlist-note" class="wl-note">
+  <p id={`${id}-msg`} class="wl-msg" role="status" aria-live="polite"></p>
+  <p id={`${id}-note`} class="wl-note">
     {t.note} <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
   </p>
 </form>
 
 <script>
-  const form = document.querySelector<HTMLFormElement>('[data-waitlist]');
-  const msg = form?.querySelector<HTMLElement>('.wl-msg');
-  const button = form?.querySelector<HTMLButtonElement>('button');
-  const label = form?.querySelector<HTMLElement>('[data-label]');
-  // The words, in the page's language, come from the form's data-* attributes.
-  const text = (key: 'idle' | 'sending' | 'done' | 'ok' | 'invalid' | 'error' | 'offline') => form?.dataset[key] ?? '';
-  const say = (text: string, ok: boolean) => {
-    if (!form || !msg) return;
-    msg.textContent = text;
-    form.classList.toggle('is-ok', ok);
-    form.classList.toggle('is-error', !ok);
-  };
-  // The button shows what's happening: idle → sending → done.
-  const setState = (state: 'idle' | 'sending' | 'done') => {
-    if (!form || !button || !label) return;
-    form.dataset.state = state;
-    label.textContent = text(state);
-    button.disabled = state === 'sending';
-    button.setAttribute('aria-busy', String(state === 'sending'));
-  };
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-waitlist]')) {
+    const msg = form.querySelector<HTMLElement>('.wl-msg');
+    const button = form.querySelector<HTMLButtonElement>('button');
+    const label = form.querySelector<HTMLElement>('[data-label]');
+    // The words, in the page's language, come from the form's data-* attributes.
+    const text = (key: 'idle' | 'sending' | 'done' | 'ok' | 'invalid' | 'error' | 'offline') => form.dataset[key] ?? '';
+    const say = (text: string, ok: boolean) => {
+      if (!msg) return;
+      msg.textContent = text;
+      form.classList.toggle('is-ok', ok);
+      form.classList.toggle('is-error', !ok);
+    };
+    // The button shows what's happening: idle → sending → done.
+    const setState = (state: 'idle' | 'sending' | 'done') => {
+      if (!button || !label) return;
+      form.dataset.state = state;
+      label.textContent = text(state);
+      button.disabled = state === 'sending';
+      button.setAttribute('aria-busy', String(state === 'sending'));
+    };
 
-  // Result after a no-JavaScript submit.
-  const result = new URLSearchParams(location.search).get('waitlist');
-  if (result === 'ok') {
-    say(text('ok'), true);
-    setState('done');
-  }
-  if (result === 'invalid') say(text('invalid'), false);
-  if (result === 'error') say(text('error'), false);
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const input = form.querySelector<HTMLInputElement>('input[name=email]')!;
-    if (!input.checkValidity() || !input.value.trim()) {
-      say(text('invalid'), false);
-      input.focus();
-      return;
+    // Result after a no-JavaScript submit: the server sends people back to
+    // the app section, so it's shown there.
+    const result = form.id === 'waitlist' ? new URLSearchParams(location.search).get('waitlist') : null;
+    if (result === 'ok') {
+      say(text('ok'), true);
+      setState('done');
     }
-    setState('sending');
-    let done = false;
-    try {
-      const res = await fetch(form.action, {
-        method: 'POST',
-        headers: { accept: 'application/json' },
-        body: new FormData(form),
-      });
-      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
-      if (res.ok && data.ok) {
-        say(text('ok'), true);
-        form.reset();
-        done = true;
-      } else if (data.error === 'invalid') {
+    if (result === 'invalid') say(text('invalid'), false);
+    if (result === 'error') say(text('error'), false);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = form.querySelector<HTMLInputElement>('input[name=email]')!;
+      if (!input.checkValidity() || !input.value.trim()) {
         say(text('invalid'), false);
-      } else {
-        say(text('error'), false);
+        input.focus();
+        return;
       }
-    } catch {
-      say(text('offline'), false);
-    } finally {
-      setState(done ? 'done' : 'idle');
-    }
-  });
+      setState('sending');
+      let done = false;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { accept: 'application/json' },
+          body: new FormData(form),
+        });
+        const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+        if (res.ok && data.ok) {
+          say(text('ok'), true);
+          form.reset();
+          done = true;
+        } else if (data.error === 'invalid') {
+          say(text('invalid'), false);
+        } else {
+          say(text('error'), false);
+        }
+      } catch {
+        say(text('offline'), false);
+      } finally {
+        setState(done ? 'done' : 'idle');
+      }
+    });
 
-  // Typing a new address makes the button ready again.
-  form?.querySelector('input[name=email]')?.addEventListener('input', () => {
-    if (form.dataset.state === 'done') setState('idle');
-  });
+    // Typing a new address makes the button ready again.
+    form.querySelector('input[name=email]')?.addEventListener('input', () => {
+      if (form.dataset.state === 'done') setState('idle');
+    });
+  }
 </script>
 
 <style>
+  .wl-kicker {
+    margin: 0;
+  }
   .waitlist {
     margin-top: 36px;
     max-width: 32rem;
@@ -256,5 +266,9 @@ const t = UI[lang].waitlist;
   .wl-note a {
     color: var(--ice);
     text-underline-offset: 3px;
+    /* A taller tap target without changing the line. */
+    display: inline-block;
+    padding-block: 12px;
+    margin-block: -12px;
   }
 </style>

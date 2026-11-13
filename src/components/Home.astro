@@ -23,8 +23,7 @@ const COPY = {
       'NEVERMADE OUTDOOR CLUB (NOC) is an outdoor app and community for chasing your firsts: first summit, first trail run, first sunrise hike, first night outside. Not about being the fastest.',
     motto: ['Do the things', 'you haven’t', 'done yet.'],
     lede: 'An outdoor app and community for chasing your firsts: the summit you’ve never stood on, the trail you’ve never run, the night you’ve never spent outside.',
-    cta: 'Get the app first',
-    discord: 'Join the Discord',
+    discord: 'Or join the Discord',
     ideaAria: 'What NOC is',
     idea: '(01) The idea',
     manifesto:
@@ -49,13 +48,19 @@ const COPY = {
     ],
     appLabel: '(04) The app',
     appTitle: 'iPhone first. Android next.',
-    appText:
-      'Record outings with GPS, find waymarked routes wherever you are, collect your firsts, follow friends and share what you did. The iPhone app is in development now. Later there will also be NOC+, an optional membership with extras; the details aren’t final yet, and the Discord hears first.',
+    appPoints: [
+      'Record walks, runs, hikes and rides with GPS.',
+      'Find waymarked routes wherever you are, and follow them.',
+      'Collect your firsts: every new summit, trail and night outside.',
+      'Share them with friends, or keep them to yourself.',
+    ],
+    appPlus: 'Later: NOC+, an optional membership with extras. The details aren’t final yet.',
     statusAria: 'Release status',
     status: ['In development', 'Later', 'Planned'],
     joinLabel: '(05) Join the club',
     join: ['Come along', 'before the', 'app does.'],
-    joinLede: 'Swap plans, find people to go with, follow the app being built and help shape it.',
+    joinLede: 'Leave your email and you’re among the first in when the iPhone app opens.',
+    joinMeanwhile: 'Until then, swap plans and find people to go with:',
     community: 'Community',
     discordSub: 'Join the NOC server',
     follow: 'Follow',
@@ -66,8 +71,7 @@ const COPY = {
       'NEVERMADE OUTDOOR CLUB (NOC) is een outdoor-app en community voor je eerste keren: je eerste top, eerste trailrun, eerste zonsopgangtocht, eerste nacht buiten. Niet om wie het snelst is.',
     motto: ['Doe wat je', 'nog nooit', 'hebt gedaan.'],
     lede: 'Een outdoor-app en community voor je eerste keren: de top waar je nooit op stond, het pad dat je nooit liep, de nacht die je nooit buiten doorbracht.',
-    cta: 'Krijg de app als eerste',
-    discord: 'Kom in de Discord',
+    discord: 'Of kom in de Discord',
     ideaAria: 'Wat NOC is',
     idea: '(01) Het idee',
     manifesto:
@@ -92,13 +96,19 @@ const COPY = {
     ],
     appLabel: '(04) De app',
     appTitle: 'Eerst iPhone. Dan Android.',
-    appText:
-      'Leg je tochten vast met gps, vind bewegwijzerde routes waar je ook bent, verzamel je eerste keren, volg vrienden en deel wat je hebt gedaan. De iPhone-app wordt nu gebouwd. Later komt er ook NOC+, een optioneel lidmaatschap met extra’s; de details staan nog niet vast, en de Discord hoort het als eerste.',
+    appPoints: [
+      'Leg wandelingen, hardlooprondjes, hikes en fietstochten vast met gps.',
+      'Vind bewegwijzerde routes waar je ook bent, en volg ze.',
+      'Verzamel je eerste keren: elke nieuwe top, elk nieuw pad, elke nacht buiten.',
+      'Deel ze met vrienden, of houd ze voor jezelf.',
+    ],
+    appPlus: 'Later: NOC+, een optioneel lidmaatschap met extra’s. De details staan nog niet vast.',
     statusAria: 'Status van de release',
     status: ['In ontwikkeling', 'Later', 'Gepland'],
     joinLabel: '(05) Word lid',
     join: ['Kom mee', 'voordat de', 'app er is.'],
-    joinLede: 'Wissel plannen uit, vind mensen om mee op pad te gaan, volg hoe de app gebouwd wordt en denk mee.',
+    joinLede: 'Laat je e-mailadres achter en je bent er als een van de eersten bij als de iPhone-app opengaat.',
+    joinMeanwhile: 'Tot die tijd: wissel plannen uit en vind mensen om mee op pad te gaan:',
     community: 'Community',
     discordSub: 'Kom in de NOC-server',
     follow: 'Volg',
@@ -128,9 +138,9 @@ const { manifesto, firsts, activities } = c;
       </div>
       <div class="hero-foot">
         <p class="lede">{c.lede}</p>
-        <div class="cta-row">
-          <a class="btn" href="#waitlist">{c.cta}</a>
-          <a class="btn btn-ghost" href={DISCORD} rel="noopener">{c.discord}</a>
+        <div class="hero-signup">
+          <Waitlist lang={lang} place="hero" />
+          <a class="quiet-link" href={DISCORD} rel="noopener">{c.discord} <span aria-hidden="true">↗</span></a>
         </div>
       </div>
     </div>
@@ -184,22 +194,6 @@ const { manifesto, firsts, activities } = c;
 
   <!-- Activities -->
   <section id="activities" class="activities" aria-labelledby="act-title">
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track">
-        {
-          [0, 1].map(() => (
-            <span class="marquee-set">
-              {activities.map((a) => (
-                <>
-                  <span>{a.name}</span>
-                  <svg class="peak" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 L12 6 L21 18" /></svg>
-                </>
-              ))}
-            </span>
-          ))
-        }
-      </div>
-    </div>
     <div class="wrap">
       <div class="act-head">
         <p class="label label-orange">{c.actLabel}</p>
@@ -225,13 +219,16 @@ const { manifesto, firsts, activities } = c;
       <div class="app-copy">
         <p class="label label-orange">{c.appLabel}</p>
         <h2 id="app-title" class="section-title">{c.appTitle}</h2>
-        <p class="app-text">{c.appText}</p>
+        <ul class="app-points">
+          {c.appPoints.map((point) => <li>{point}</li>)}
+        </ul>
         <ul class="status" aria-label={c.statusAria}>
           <li><span class="dot dot-live" aria-hidden="true"></span><b>iPhone</b><span class="label">{c.status[0]}</span></li>
           <li><span class="dot" aria-hidden="true"></span><b>Android</b><span class="label">{c.status[1]}</span></li>
           <li><span class="dot" aria-hidden="true"></span><b>NOC+</b><span class="label">{c.status[2]}</span></li>
         </ul>
         <div><Waitlist lang={lang} /></div>
+        <p class="app-plus">{c.appPlus}</p>
       </div>
 
       <div class="app-visual"><AppShowcase lang={lang} /></div>
@@ -247,6 +244,8 @@ const { manifesto, firsts, activities } = c;
         {c.join[0]}<br />{c.join[1]}<br /><span class="accent">{c.join[2]}</span>
       </h2>
       <p class="join-lede">{c.joinLede}</p>
+      <Waitlist lang={lang} place="join" />
+      <p class="join-meanwhile">{c.joinMeanwhile}</p>
       <div class="join-cards">
         <a class="join-card" href={DISCORD} rel="noopener">
           <span class="label label-orange">{c.community}</span>
@@ -369,12 +368,14 @@ const { manifesto, firsts, activities } = c;
   .motto .line > span {
     display: inline-block;
     white-space: nowrap;
-    animation: line-up 1.3s var(--ease-out) both;
-    animation-delay: calc(0.2s + var(--i) * 0.12s);
+    /* Quick: the words are readable within about 0.3 s, even on a phone. */
+    animation: line-up 0.5s var(--ease-out) both;
+    animation-delay: calc(var(--i) * 0.04s);
   }
   @keyframes line-up {
     from {
-      transform: translateY(108%);
+      transform: translateY(60%);
+      opacity: 0;
     }
   }
   .accent {
@@ -386,7 +387,7 @@ const { manifesto, firsts, activities } = c;
     align-items: flex-end;
     justify-content: space-between;
     gap: 20px 48px;
-    animation: fade-up 1.2s var(--ease-out) 0.75s both;
+    animation: fade-up 0.6s var(--ease-out) 0.1s both;
   }
   @keyframes fade-up {
     from {
@@ -400,14 +401,39 @@ const { manifesto, firsts, activities } = c;
     line-height: 1.5;
     text-shadow: 0 1px 14px rgb(0 0 0 / 0.6);
   }
-  .cta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+  .hero-signup {
+    flex: 0 1 30rem;
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+  }
+  .hero-signup :global(.waitlist) {
+    margin-top: 0;
+    width: 100%;
+  }
+  .quiet-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--stone-text);
+    font-weight: 500;
+    text-underline-offset: 4px;
+  }
+  .quiet-link:hover {
+    color: var(--ice);
   }
   @media (max-width: 760px) {
     .hero {
       min-height: max(100svh, 700px);
+    }
+    /* On a phone the words sit over the bright ridge: a dark veil behind them
+       keeps them readable while the ridge still shows above. */
+    .sky::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--page) 78%, transparent) 55%, var(--page) 85%);
+      pointer-events: none;
     }
   }
 
@@ -488,7 +514,12 @@ const { manifesto, firsts, activities } = c;
 
   /* Pinned: the section is tall, its inside sticks, and scrolling walks the route. */
   .story.is-pinned {
-    height: 420vh;
+    height: 260vh;
+  }
+  @media (max-width: 760px) {
+    .story.is-pinned {
+      height: 200vh;
+    }
   }
   .is-pinned .story-pin {
     position: sticky;
@@ -518,17 +549,22 @@ const { manifesto, firsts, activities } = c;
     grid-column: 2;
     margin: 0;
   }
+  /* The outgoing first leaves quickly and the next one comes in just after,
+     so two never sit on top of each other. */
   .is-pinned .first {
     grid-area: 1 / 1;
     opacity: 0;
     transform: translateY(28px);
     transition:
-      opacity 0.45s ease,
+      opacity 0.15s ease,
       transform 0.7s var(--ease-out);
   }
   .is-pinned .first.active {
     opacity: 1;
     transform: none;
+    transition:
+      opacity 0.4s ease 0.12s,
+      transform 0.7s var(--ease-out) 0.12s;
   }
   .is-pinned .first p {
     text-shadow: 0 1px 12px var(--page);
@@ -552,48 +588,6 @@ const { manifesto, firsts, activities } = c;
   /* Activities */
   .activities {
     padding-bottom: clamp(80px, 12vw, 160px);
-  }
-  .marquee {
-    overflow: hidden;
-    padding-block: 28px;
-    border-block: 1px solid var(--line);
-    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-  }
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    animation: marquee 40s linear infinite;
-  }
-  .marquee-set {
-    display: flex;
-    align-items: center;
-  }
-  .marquee-set span {
-    font-family: var(--display);
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: clamp(3rem, 9vw, 7.5rem);
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1.5px var(--outline);
-    padding-inline: 0.25em;
-  }
-  .peak {
-    flex: none;
-    width: clamp(1.2rem, 2.6vw, 2rem);
-    height: clamp(1.2rem, 2.6vw, 2rem);
-    margin-inline: 0.35em;
-    fill: none;
-    stroke: var(--orange);
-    stroke-width: 3.2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  @keyframes marquee {
-    to {
-      transform: translateX(-50%);
-    }
   }
   .act-head {
     padding-top: clamp(64px, 10vw, 120px);
@@ -673,10 +667,34 @@ const { manifesto, firsts, activities } = c;
     align-items: center;
     gap: clamp(48px, 7vw, 96px);
   }
-  .app-text {
-    margin-top: 24px;
+  .app-points {
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
     max-width: 34rem;
+    display: grid;
+    gap: 10px;
     font-size: 1.1rem;
+  }
+  .app-points li {
+    position: relative;
+    padding-left: 22px;
+  }
+  .app-points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--orange);
+  }
+  .app-plus {
+    margin-top: 20px;
+    max-width: 30rem;
+    font-size: 0.85rem;
+    color: var(--stone-text);
   }
   .status {
     list-style: none;
@@ -744,18 +762,24 @@ const { manifesto, firsts, activities } = c;
     max-width: 30rem;
     font-size: 1.15rem;
   }
+  .join-meanwhile {
+    margin-top: 40px;
+    color: var(--stone-text);
+  }
+  /* Discord and Instagram come second to the waitlist: smaller cards. */
   .join-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-    gap: 14px;
-    margin-top: 48px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 12px;
+    margin-top: 16px;
+    max-width: 44rem;
   }
   .join-card {
     position: relative;
     display: grid;
-    gap: 6px;
-    padding: 28px 28px 30px;
-    border-radius: 24px;
+    gap: 4px;
+    padding: 20px 22px 22px;
+    border-radius: 20px;
     background: color-mix(in srgb, var(--page) 80%, transparent);
     border: 1px solid var(--line);
     text-decoration: none;
@@ -778,7 +802,7 @@ const { manifesto, firsts, activities } = c;
   .join-name {
     font-family: var(--display);
     font-weight: 700;
-    font-size: clamp(2.8rem, 6vw, 4.2rem);
+    font-size: clamp(2rem, 4vw, 2.8rem);
     text-transform: uppercase;
     line-height: 0.95;
     margin-top: 10px;
