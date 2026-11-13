@@ -4,16 +4,17 @@ import { HOME, UI, type Lang } from '../i18n';
 // "Tell me when the app is out": one email field. Posts to /api/waitlist
 // (worker/index.ts). Works without JavaScript too (the server redirects back
 // with ?waitlist=ok / ?waitlist=error); with JavaScript it answers in place.
-// It's the site's one main action, so it appears in a few places: `place`
-// keeps their ids apart (#waitlist is the one in the app section).
+// It's the site's one main action: at the top (place="hero") and at the end
+// of the home page (#waitlist, where the header button and a no-JavaScript
+// submit lead).
 const CONTACT = CONTACT_EMAIL;
 
 interface Props {
   lang?: Lang;
-  place?: 'app' | 'hero' | 'join';
+  place?: 'hero' | 'end';
 }
-const { lang = 'en', place = 'app' } = Astro.props;
-const id = place === 'app' ? 'waitlist' : `waitlist-${place}`;
+const { lang = 'en', place = 'end' } = Astro.props;
+const id = place === 'end' ? 'waitlist' : `waitlist-${place}`;
 const t = UI[lang].waitlist;
 ---
 
@@ -87,7 +88,7 @@ const t = UI[lang].waitlist;
     };
 
     // Result after a no-JavaScript submit: the server sends people back to
-    // the app section, so it's shown there.
+    // #waitlist, so it's shown there.
     const result = form.id === 'waitlist' ? new URLSearchParams(location.search).get('waitlist') : null;
     if (result === 'ok') {
       say(text('ok'), true);
@@ -141,6 +142,8 @@ const t = UI[lang].waitlist;
     margin: 0;
   }
   .waitlist {
+    /* Room under the sticky header when a link jumps here. */
+    scroll-margin-top: 110px;
     margin-top: 36px;
     max-width: 32rem;
     display: grid;

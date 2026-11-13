@@ -227,7 +227,6 @@ const { manifesto, firsts, activities } = c;
           <li><span class="dot" aria-hidden="true"></span><b>Android</b><span class="label">{c.status[1]}</span></li>
           <li><span class="dot" aria-hidden="true"></span><b>NOC+</b><span class="label">{c.status[2]}</span></li>
         </ul>
-        <div><Waitlist lang={lang} /></div>
         <p class="app-plus">{c.appPlus}</p>
       </div>
 
@@ -244,7 +243,7 @@ const { manifesto, firsts, activities } = c;
         {c.join[0]}<br />{c.join[1]}<br /><span class="accent">{c.join[2]}</span>
       </h2>
       <p class="join-lede">{c.joinLede}</p>
-      <Waitlist lang={lang} place="join" />
+      <Waitlist lang={lang} />
       <p class="join-meanwhile">{c.joinMeanwhile}</p>
       <div class="join-cards">
         <a class="join-card" href={DISCORD} rel="noopener">

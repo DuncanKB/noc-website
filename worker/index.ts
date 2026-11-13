@@ -77,7 +77,7 @@ async function waitlist(request: Request, env: Env, url: URL, ctx: ExecutionCont
   const reply = (status: number, result: 'ok' | 'invalid' | 'error') =>
     wantsJson
       ? Response.json(result === 'ok' ? { ok: true } : { ok: false, error: result }, { status })
-      : Response.redirect(`${url.origin}${back}?waitlist=${result}#app`, 303);
+      : Response.redirect(`${url.origin}${back}?waitlist=${result}#waitlist`, 303);
 
   // Only accept form posts from this site.
   const origin = request.headers.get('origin');
