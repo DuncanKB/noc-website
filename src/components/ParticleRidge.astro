@@ -1,0 +1,179 @@
+---
+// PREVIEW: a field of glowing orange particles that forms a volcanic ridge and
+// slowly moves like a swell. Plain WebGL, no library (about 4 kB). It draws
+// one still frame with reduced motion, pauses when off screen or in a
+// background tab, and uses fewer particles on phones. Without WebGL the hero
+// keeps its gradient sky.
+---
+
+<canvas class="particles" data-particles aria-hidden="true"></canvas>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-particles]');
+  const gl = canvas?.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: true });
+
+  if (canvas && gl) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const small = matchMedia('(max-width: 760px)').matches;
+
+    const VERT = `
+      attribute vec2 a;            // x across (-1..1), y = depth (0 near .. 1 far)
+      uniform float t;
+      uniform float aspect;
+      uniform float dpr;
+      varying float vLight;
+      varying float vFade;
+
+      float peak(float x, float c, float w, float h) {
+        float d = (x - c) / w;
+        return h * exp(-d * d);
+      }
+
+      void main() {
+        float z = a.y;
+        float zw = mix(1.4, 9.0, z);                // distance from the camera
+        float xw = a.x * zw * 1.15 * max(aspect, 0.8);
+
+        // The skyline: a volcano, a few shoulders, jagged ridges. Flat close by.
+        float m = peak(xw, 2.6, 2.4, 2.1)             // the volcano
+                + peak(xw, -4.2, 2.6, 1.35)
+                + peak(xw, -0.6, 1.5, 0.75)
+                + peak(xw, 7.5, 3.0, 1.2)
+                + 0.18 * (1.0 - abs(sin(xw * 1.7 + 0.4)))
+                + 0.08 * (1.0 - abs(sin(xw * 4.1 + z * 9.0)));
+        // A crater on the volcano's top.
+        m -= peak(xw, 2.6, 0.35, 0.28);
+        float far = smoothstep(0.15, 0.85, z);
+        m *= far;
+
+        // The swell rolling through it.
+        float wave = 0.16 * sin(xw * 0.9 + z * 7.0 - t * 0.55)
+                   + 0.08 * sin(xw * 2.3 - z * 4.0 + t * 0.37);
+        float y = m + wave * (1.0 - 0.5 * far);
+
+        float camH = 1.15;
+        gl_Position = vec4(a.x * 1.06, (y - camH) / zw * 2.1 - 0.02, 0.0, 1.0);
+
+        // Higher points glow more; the crest of the swell catches light too.
+        vLight = clamp(m / 2.0 + 0.35 * max(wave, 0.0) / 0.24, 0.0, 1.0);
+        vFade = (1.0 - smoothstep(0.88, 1.0, z)) * smoothstep(0.0, 0.12, z)
+              * (1.0 - smoothstep(0.85, 1.0, abs(a.x)));
+        gl_PointSize = clamp(9.0 / zw, 1.4, 3.6) * dpr * (0.9 + 0.7 * vLight);
+      }`;
+
+    const FRAG = `
+      precision mediump float;
+      varying float vLight;
+      varying float vFade;
+      void main() {
+        vec2 p = gl_PointCoord - 0.5;
+        float d = length(p);
+        float dot = smoothstep(0.5, 0.0, d);
+        vec3 orange = vec3(0.992, 0.376, 0.008);   // #fd6002
+        vec3 hot = vec3(1.0, 0.78, 0.55);
+        vec3 col = mix(orange, hot, vLight * vLight * 0.7);
+        float a = min(1.0, dot * vFade * (0.4 + 1.4 * vLight));
+        gl_FragColor = vec4(col * a, a);
+      }`;
+
+    const shader = (type: number, src: string) => {
+      const s = gl.createShader(type)!;
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    };
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, shader(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog);
+
+    if (gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      gl.useProgram(prog);
+
+      // The grid of particles: more columns than rows, and denser far away.
+      const cols = small ? 150 : 300;
+      const rows = small ? 60 : 110;
+      const pts = new Float32Array(cols * rows * 2);
+      let k = 0;
+      for (let r = 0; r < rows; r++) {
+        const z = Math.pow(r / (rows - 1), 0.75);
+        for (let c = 0; c < cols; c++) {
+          pts[k++] = (c / (cols - 1)) * 2 - 1 + (r % 2 ? 1 / cols : 0);
+          pts[k++] = z;
+        }
+      }
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, pts, gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, 'a');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+      const uT = gl.getUniformLocation(prog, 't');
+      const uAspect = gl.getUniformLocation(prog, 'aspect');
+      const uDpr = gl.getUniformLocation(prog, 'dpr');
+
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE); // additive: overlapping dots glow
+      gl.clearColor(0, 0, 0, 0);
+
+      const dpr = Math.min(devicePixelRatio || 1, small ? 1.5 : 2);
+      const resize = () => {
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform1f(uAspect, w / Math.max(h, 1));
+        gl.uniform1f(uDpr, dpr);
+      };
+
+      const draw = (time: number) => {
+        gl.uniform1f(uT, time / 1000);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.POINTS, 0, cols * rows);
+      };
+
+      resize();
+      let visible = true;
+      let raf = 0;
+      const loop = (time: number) => {
+        draw(time);
+        raf = visible && !document.hidden ? requestAnimationFrame(loop) : 0;
+      };
+      const start = () => {
+        if (!reduced && !raf) raf = requestAnimationFrame(loop);
+      };
+
+      if (reduced) draw(4000);
+      else start();
+
+      addEventListener('resize', () => {
+        resize();
+        if (reduced) draw(4000);
+      });
+      new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+        if (visible) start();
+      }).observe(canvas);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) start();
+      });
+      requestAnimationFrame(() => canvas.classList.add('on'));
+    }
+  }
+</script>
+
+<style>
+  .particles {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1.6s ease;
+  }
+  .particles:global(.on) {
+    opacity: 1;
+  }
+</style>
