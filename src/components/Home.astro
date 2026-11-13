@@ -9,11 +9,10 @@ import Waitlist from './Waitlist.astro';
 import AppShowcase from './AppShowcase.astro';
 import ContourBackdrop from './ContourBackdrop.astro';
 import ParticleRidge from './ParticleRidge.astro';
-import MottoMask from './MottoMask.astro';
 
 interface Props {
   lang: Lang;
-  // PREVIEW (/preview): the particle ridge hero and the masked motto.
+  // PREVIEW (/preview): the particle ridge hero.
   preview?: boolean;
 }
 const { lang, preview = false } = Astro.props;
@@ -183,8 +182,6 @@ const RIDGE_BACK =
       </div>
     </div>
   </section>
-
-  {preview && <MottoMask lang={lang} />}
 
   <!-- Manifesto: words light up as you read -->
   <section class="manifesto" aria-label={c.ideaAria} data-manifesto>
