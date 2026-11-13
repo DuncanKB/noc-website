@@ -26,7 +26,7 @@ const otherCode = lang === 'en' ? 'nl' : 'en';
         <li class="hide-sm"><a href={link('#story')}>{t.howItWorks}</a></li>
         <li class="hide-sm"><a href={link('#app')}>{t.theApp}</a></li>
         <li>
-          <a class="lang-switch" href={switchHref} hreflang={otherCode} lang={otherCode} aria-label={t.switchTo}>
+          <a class="lang-switch" href={switchHref} hreflang={otherCode} lang={otherCode} aria-label={`${otherCode.toUpperCase()}, ${t.switchTo}`}>
             {otherCode.toUpperCase()}
           </a>
         </li>

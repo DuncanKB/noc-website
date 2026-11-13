@@ -41,7 +41,7 @@ export default {
       return waitlist(request, env, url, ctx);
     }
 
-    return secure(await env.ASSETS.fetch(request));
+    return secure(await env.ASSETS.fetch(request), url.pathname);
   },
 };
 
@@ -58,9 +58,16 @@ const SECURITY_HEADERS: Record<string, string> = {
   'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
 };
 
-function secure(res: Response): Response {
+function secure(res: Response, path = ''): Response {
   const out = new Response(res.body, res);
   for (const [k, v] of Object.entries(SECURITY_HEADERS)) out.headers.set(k, v);
+  if (res.status === 200) {
+    // Files in /_astro/ have a content hash in their name: they never change,
+    // so browsers may keep them for a year. Images in public/ keep their name
+    // when replaced, so a day. Pages stay fresh (the default).
+    if (path.startsWith('/_astro/')) out.headers.set('cache-control', 'public, max-age=31536000, immutable');
+    else if (/\.(webp|png|svg|ico)$/.test(path)) out.headers.set('cache-control', 'public, max-age=86400');
+  }
   return out;
 }
 
