@@ -7,7 +7,7 @@ import { CONTACT_EMAIL } from '../links';
 import Base from '../layouts/Base.astro';
 import Section from '../components/PolicySection.astro';
 
-const UPDATED = '13 November 2026'; // added: a route's climb from Open-Meteo, routes saved for later (sections 03 and 06)
+const UPDATED = '13 November 2026'; // added: climb and weather from Open-Meteo, saved routes, share as image (sections 03, 05 and 06)
 const CONTACT = CONTACT_EMAIL;
 ---
 
@@ -76,7 +76,8 @@ const CONTACT = CONTACT_EMAIL;
             worked out on your phone. When you open a route, the app asks OpenStreetMap for that route's line using
             only the route's number, not your location, and keeps the line on your phone for 30 days. For the route's
             climb, 100 points along that route (not your location) are sent to Open-Meteo for their heights, also kept
-            on your phone for 30 days. Routes you save for later stay on your phone only.
+            on your phone for 30 days. The weather shown for a route is asked for the route's start (rounded to
+            about 1 km), not for your location, and isn't stored. Routes you save for later stay on your phone only.
           </li>
           <li>
             <strong>Naming your places:</strong> to show where your outings started, your phone looks up the centre
@@ -112,6 +113,10 @@ const CONTACT = CONTACT_EMAIL;
             NEVERMADE). You also choose whether a post is for everyone or only your followers.
           </li>
           <li>
+            <strong>Share as image</strong> makes a picture of an outing on your phone. It only leaves your phone when
+            you pick where to share it, and by default it leaves out the first and last 200 m of the route.
+          </li>
+          <li>
             <strong>Your profile</strong> (name, username, photo) is visible to other NEVERMADE users, as far as your
             privacy settings allow.
           </li>
@@ -140,8 +145,9 @@ const CONTACT = CONTACT_EMAIL;
             policy.
           </li>
           <li>
-            <strong>Open-Meteo</strong> (Switzerland) gives the heights for a route's climb. It receives points along
-            the route you open, never your own position; like any web server, it also sees your IP address.
+            <strong>Open-Meteo</strong> (Switzerland) gives the heights for a route's climb and the weather at its
+            start. It receives points along the route you open, never your own position; like any web server, it also
+            sees your IP address.
           </li>
           <li>
             <strong>Apple</strong> provides maps on iPhone, step counts (Motion &amp; Fitness) and, when available,
