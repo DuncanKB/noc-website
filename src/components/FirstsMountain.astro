@@ -1,0 +1,377 @@
+---
+// The firsts story's mountain: the same glowing particles as the hero, now a
+// mountain seen from its foot. An orange route climbs it as you scroll, and the
+// checkpoints (one per first) sit on the route. The section's script sends the
+// progress (0 → 1) as a 'route-progress' event on [data-story]; this draws it.
+// Plain WebGL; without it the section still works (text only). One still
+// frame with the whole route with reduced motion.
+interface Props {
+  count: number;
+}
+const { count } = Astro.props;
+---
+
+<div class="mountain" aria-hidden="true" data-mountain>
+  <canvas></canvas>
+  <span class="head" data-head></span>
+  {Array.from({ length: count }, (_, i) => <span class="pin" data-pin={i}><span class="pin-n">0{i + 1}</span></span>)}
+</div>
+
+<script>
+  // Where the checkpoints sit along the route (fractions of its length).
+  const STOPS = [0.2, 0.45, 0.68, 0.92];
+
+  const box = document.querySelector<HTMLElement>('[data-mountain]');
+  const story = box?.closest<HTMLElement>('[data-story]');
+  const canvas = box?.querySelector('canvas');
+  const gl = canvas?.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: true });
+
+  // The terrain height. The shader below has the same function (HEIGHT).
+  const g = (dx: number, dz: number, sx: number, sz: number) =>
+    Math.exp(-((dx * dx) / (2 * sx * sx) + (dz * dz) / (2 * sz * sz)));
+  const height = (x: number, z: number) => {
+    let h =
+      3.4 * g(x - 0.8, z - 6.5, 1.7, 1.9) +
+      1.6 * g(x + 3.6, z - 8.0, 1.5, 2.0) +
+      1.3 * g(x - 4.6, z - 8.5, 1.7, 2.2) +
+      0.6 * g(x + 1.2, z - 3.5, 1.2, 1.0);
+    h += 0.12 * Math.sin(x * 2.3 + z * 1.1) * Math.sin(z * 1.9 - x * 0.7);
+    h += 0.18 * (h / 3.4) * (1 - Math.abs(Math.sin(x * 3.1 + z * 2.2)));
+    return h;
+  };
+  const HEIGHT = `
+    float g(float dx, float dz, float sx, float sz) {
+      return exp(-((dx * dx) / (2.0 * sx * sx) + (dz * dz) / (2.0 * sz * sz)));
+    }
+    float height(float x, float z) {
+      float h = 3.4 * g(x - 0.8, z - 6.5, 1.7, 1.9)
+              + 1.6 * g(x + 3.6, z - 8.0, 1.5, 2.0)
+              + 1.3 * g(x - 4.6, z - 8.5, 1.7, 2.2)
+              + 0.6 * g(x + 1.2, z - 3.5, 1.2, 1.0);
+      h += 0.12 * sin(x * 2.3 + z * 1.1) * sin(z * 1.9 - x * 0.7);
+      h += 0.18 * (h / 3.4) * (1.0 - abs(sin(x * 3.1 + z * 2.2)));
+      return h;
+    }`;
+  // The camera, shared by the shaders and the pins: [x, y, z, pitch, fx, fy].
+  const PROJECT = `
+    uniform vec4 cam;   // camera y, camera z, cos(pitch), sin(pitch)
+    uniform vec2 focal; // fx, fy
+    vec4 project(vec3 p) {
+      vec3 r = vec3(p.x, p.y - cam.x, p.z - cam.y);
+      float zc = -r.y * cam.w + r.z * cam.z;
+      float yc = r.y * cam.z + r.z * cam.w;
+      return vec4(r.x * focal.x, yc * focal.y, 0.0, zc);
+    }`;
+
+  // The route up the mountain, from its foot to the summit.
+  const KEYS: [number, number][] = [
+    [-2.1, 1.0], [-0.5, 2.2], [-1.7, 3.4], [-0.1, 4.4], [-1.0, 5.3], [0.2, 5.9], [0.8, 6.5],
+  ];
+  const catmull = (a: number, b: number, c: number, d: number, t: number) =>
+    0.5 * (2 * b + (c - a) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (3 * b - a - 3 * c + d) * t * t * t);
+  const route: { x: number; y: number; z: number; t: number }[] = [];
+  {
+    const raw: [number, number, number][] = [];
+    for (let i = 0; i < KEYS.length - 1; i++) {
+      const [a, b, c, d] = [KEYS[Math.max(0, i - 1)], KEYS[i], KEYS[i + 1], KEYS[Math.min(KEYS.length - 1, i + 2)]];
+      for (let s = 0; s < 120; s++) {
+        const t = s / 120;
+        const x = catmull(a[0], b[0], c[0], d[0], t);
+        const z = catmull(a[1], b[1], c[1], d[1], t);
+        raw.push([x, height(x, z) + 0.05, z]);
+      }
+    }
+    raw.push([0.8, height(0.8, 6.5) + 0.05, 6.5]);
+    let total = 0;
+    const lens = raw.map((p, i) => (i ? (total += Math.hypot(p[0] - raw[i - 1][0], p[1] - raw[i - 1][1], p[2] - raw[i - 1][2])) : 0));
+    raw.forEach((p, i) => route.push({ x: p[0], y: p[1], z: p[2], t: lens[i] / total }));
+  }
+  const pointAt = (t: number) => route[Math.min(route.length - 1, route.findIndex((p) => p.t >= t))];
+
+  if (box && story && canvas && gl) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const small = matchMedia('(max-width: 760px)').matches;
+    const pins = [...box.querySelectorAll<HTMLElement>('[data-pin]')];
+    const head = box.querySelector<HTMLElement>('[data-head]')!;
+
+    const TERRAIN_VERT = `
+      attribute vec2 a; // world x, z
+      uniform float t;
+      uniform float dpr;
+      varying float vLight;
+      varying float vFade;
+      ${HEIGHT}
+      ${PROJECT}
+      void main() {
+        float h = height(a.x, a.y);
+        vec3 n = normalize(vec3(height(a.x - 0.05, a.y) - height(a.x + 0.05, a.y), 0.1,
+                                height(a.x, a.y - 0.05) - height(a.x, a.y + 0.05)));
+        vec4 p = project(vec3(a.x, h, a.y));
+        gl_Position = vec4(p.xy, 0.0, p.w);
+        float sun = max(dot(n, normalize(vec3(0.55, 0.6, -0.45))), 0.0);
+        float shimmer = 0.85 + 0.15 * sin(t * 0.8 + a.x * 1.3 + a.y * 0.9);
+        vLight = clamp((0.15 + 0.85 * sun) * (0.35 + h / 3.0) * shimmer, 0.0, 1.0);
+        vFade = smoothstep(0.0, 1.2, a.y) * (1.0 - smoothstep(10.0, 12.0, a.y))
+              * (1.0 - smoothstep(5.5, 7.0, abs(a.x)));
+        gl_PointSize = clamp(14.0 / p.w, 1.2, 3.4) * dpr;
+      }`;
+    const TERRAIN_FRAG = `
+      precision mediump float;
+      varying float vLight;
+      varying float vFade;
+      void main() {
+        float d = length(gl_PointCoord - 0.5);
+        float dot = smoothstep(0.5, 0.0, d);
+        vec3 col = mix(vec3(0.992, 0.376, 0.008), vec3(1.0, 0.78, 0.55), vLight * vLight * 0.6);
+        float a = min(1.0, dot * vFade * (0.18 + 1.45 * vLight));
+        gl_FragColor = vec4(col * a, a);
+      }`;
+    const ROUTE_VERT = `
+      attribute vec4 a; // x, y, z, t (0 → 1 along the route)
+      uniform float progress;
+      uniform float dpr;
+      varying float vDone;
+      varying float vT;
+      ${PROJECT}
+      void main() {
+        vec4 p = project(a.xyz);
+        gl_Position = vec4(p.xy, 0.0, p.w);
+        vDone = step(a.w, progress);
+        vT = a.w;
+        gl_PointSize = mix(2.6, 4.6, vDone) * dpr;
+      }`;
+    const ROUTE_FRAG = `
+      precision mediump float;
+      varying float vDone;
+      varying float vT;
+      void main() {
+        float d = length(gl_PointCoord - 0.5);
+        float dot = smoothstep(0.5, 0.1, d);
+        // Ahead: a dotted line in warm grey. Walked: solid, glowing orange.
+        float dash = step(0.5, fract(vT * 140.0));
+        vec3 col = mix(vec3(0.56, 0.54, 0.52), vec3(1.0, 0.55, 0.2), vDone);
+        float a = dot * mix(0.55 * dash, 1.0, vDone);
+        gl_FragColor = vec4(col * a, a);
+      }`;
+
+    const program = (vs: string, fs: string) => {
+      const p = gl.createProgram()!;
+      for (const [type, src] of [[gl.VERTEX_SHADER, vs], [gl.FRAGMENT_SHADER, fs]] as const) {
+        const s = gl.createShader(type)!;
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        gl.attachShader(p, s);
+      }
+      gl.linkProgram(p);
+      return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null;
+    };
+    const terrain = program(TERRAIN_VERT, TERRAIN_FRAG);
+    const line = program(ROUTE_VERT, ROUTE_FRAG);
+
+    if (terrain && line) {
+      // Terrain particles on a world grid.
+      const cols = small ? 150 : 260;
+      const rows = small ? 110 : 170;
+      const grid = new Float32Array(cols * rows * 2);
+      let k = 0;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          grid[k++] = -7 + (14 * c) / (cols - 1) + (r % 2 ? 7 / cols : 0);
+          grid[k++] = (12 * r) / (rows - 1);
+        }
+      }
+      const gridBuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, gridBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, grid, gl.STATIC_DRAW);
+
+      const routeData = new Float32Array(route.flatMap((p) => [p.x, p.y, p.z, p.t]));
+      const routeBuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, routeBuf);
+      gl.bufferData(gl.ARRAY_BUFFER, routeData, gl.STATIC_DRAW);
+
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE);
+      gl.clearColor(0, 0, 0, 0);
+
+      const dpr = Math.min(devicePixelRatio || 1, small ? 1.5 : 2);
+      let progress = reduced ? 1 : 0;
+      let w = 1;
+      let h = 1;
+      let fx = 1;
+      let fy = 1;
+
+      // The camera walks a little closer and lower as the route climbs.
+      const camera = () => {
+        const pitch = 0.28 + progress * 0.04;
+        return { y: 4.2 - progress * 0.5, z: -3 + progress * 1.6, c: Math.cos(pitch), s: Math.sin(pitch) };
+      };
+      const toScreen = (x: number, y: number, z: number) => {
+        const cam = camera();
+        const ry = y - cam.y;
+        const rz = z - cam.z;
+        const zc = -ry * cam.s + rz * cam.c;
+        const yc = ry * cam.c + rz * cam.s;
+        return { left: ((x * fx) / zc / 2 + 0.5) * w, top: (0.5 - (yc * fy) / zc / 2) * h };
+      };
+
+      const resize = () => {
+        w = canvas.clientWidth;
+        h = canvas.clientHeight;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        const aspect = w / Math.max(h, 1);
+        // Wide: the whole range. Tall (phones): closer in on the mountain.
+        fy = aspect >= 1 ? 1.8 : 1.8 * Math.min(1, aspect * 1.6);
+        fx = fy / aspect;
+      };
+
+      const uniforms = (p: WebGLProgram) => {
+        const cam = camera();
+        gl.uniform4f(gl.getUniformLocation(p, 'cam'), cam.y, cam.z, cam.c, cam.s);
+        gl.uniform2f(gl.getUniformLocation(p, 'focal'), fx, fy);
+        gl.uniform1f(gl.getUniformLocation(p, 'dpr'), dpr);
+      };
+
+      const draw = (time: number) => {
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.useProgram(terrain);
+        uniforms(terrain);
+        gl.uniform1f(gl.getUniformLocation(terrain, 't'), time / 1000);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gridBuf);
+        const ta = gl.getAttribLocation(terrain, 'a');
+        gl.enableVertexAttribArray(ta);
+        gl.vertexAttribPointer(ta, 2, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.POINTS, 0, cols * rows);
+
+        gl.useProgram(line);
+        uniforms(line);
+        gl.uniform1f(gl.getUniformLocation(line, 'progress'), progress);
+        gl.bindBuffer(gl.ARRAY_BUFFER, routeBuf);
+        const ra = gl.getAttribLocation(line, 'a');
+        gl.enableVertexAttribArray(ra);
+        gl.vertexAttribPointer(ra, 4, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.POINTS, 0, route.length);
+
+        // The checkpoints and the walker, on the route.
+        pins.forEach((pin, i) => {
+          const p = pointAt(STOPS[i]);
+          const s = toScreen(p.x, p.y, p.z);
+          pin.style.translate = `${s.left}px ${s.top}px`;
+        });
+        const at = pointAt(Math.max(0.001, progress));
+        const s = toScreen(at.x, at.y, at.z);
+        head.style.translate = `${s.left}px ${s.top}px`;
+        head.classList.toggle('on', progress > 0.005 && progress < 0.999);
+      };
+
+      resize();
+      let visible = false;
+      let raf = 0;
+      let last = 4000;
+      const loop = (time: number) => {
+        last = time;
+        draw(time);
+        raf = visible && !document.hidden ? requestAnimationFrame(loop) : 0;
+      };
+      const start = () => {
+        if (reduced) draw(4000);
+        else if (!raf) raf = requestAnimationFrame(loop);
+      };
+
+      story.addEventListener('route-progress', (e) => {
+        progress = (e as CustomEvent<number>).detail;
+        if (!raf) draw(last);
+      });
+      // The box changes size when the section gets pinned, and with the window.
+      new ResizeObserver(() => {
+        resize();
+        draw(last);
+      }).observe(canvas);
+      new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+        if (visible) start();
+      }).observe(canvas);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && visible) start();
+      });
+      draw(last);
+      box.classList.add('on');
+    }
+  }
+</script>
+
+<style>
+  .mountain {
+    position: relative;
+    height: clamp(280px, 60vh, 560px);
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  .mountain:global(.on) {
+    opacity: 1;
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .pin,
+  .head {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .pin {
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border-radius: 50%;
+    background: var(--page);
+    border: 2px solid var(--pin);
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.4s ease,
+      scale 0.4s var(--ease-out);
+  }
+  .pin:global(.on) {
+    background: var(--orange);
+    border-color: var(--orange);
+    box-shadow:
+      0 0 0 8px color-mix(in srgb, var(--orange) 18%, transparent),
+      0 0 28px color-mix(in srgb, var(--orange) 80%, transparent);
+    scale: 1.15;
+  }
+  .pin-n {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    translate: -50% 0;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--stone-text);
+  }
+  .pin:global(.on) .pin-n {
+    color: var(--orange);
+  }
+  /* The walker: a bright dot at the end of the walked route. */
+  .head {
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: var(--ice);
+    box-shadow:
+      0 0 0 5px color-mix(in srgb, var(--orange) 35%, transparent),
+      0 0 22px 6px color-mix(in srgb, var(--orange) 80%, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .head:global(.on) {
+    opacity: 1;
+  }
+</style>

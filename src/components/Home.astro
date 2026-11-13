@@ -9,6 +9,7 @@ import Waitlist from './Waitlist.astro';
 import AppShowcase from './AppShowcase.astro';
 import ContourBackdrop from './ContourBackdrop.astro';
 import ParticleRidge from './ParticleRidge.astro';
+import FirstsMountain from './FirstsMountain.astro';
 
 interface Props {
   lang: Lang;
@@ -106,9 +107,6 @@ const COPY = {
 const c = COPY[lang];
 const { manifesto, firsts, activities } = c;
 
-// The elevation profile the firsts story draws along (viewBox 0 0 1000 300).
-const PROFILE =
-  'M0 250 C60 245 90 230 130 205 S200 120 250 95 S300 130 340 160 S420 200 470 175 S540 90 600 70 S660 110 700 150 S760 210 820 190 S900 120 940 110 S980 120 1000 125';
 ---
 
 <Base title={c.title} description={c.description} lang={lang} translated>
@@ -154,28 +152,13 @@ const PROFILE =
     </div>
   </section>
 
-  <!-- The firsts story: a route drawn along an elevation profile -->
+  <!-- The firsts story: a route climbs a particle mountain as you scroll -->
   <section id="story" class="story" aria-labelledby="story-title" data-story>
     <div class="story-pin">
       <div class="wrap story-inner">
         <div class="story-head">
           <p class="label label-orange">{c.firstsLabel}</p>
           <h2 id="story-title" class="story-title">{c.firstsTitle}</h2>
-        </div>
-
-        <svg class="profile" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" style="stop-color: var(--orange)" stop-opacity="0.22"></stop>
-              <stop offset="1" style="stop-color: var(--orange)" stop-opacity="0"></stop>
-            </linearGradient>
-          </defs>
-          <path d={`${PROFILE} L1000 300 L0 300Z`} fill="url(#fade)"></path>
-          <path class="profile-base" d={PROFILE} fill="none" vector-effect="non-scaling-stroke"></path>
-          <path class="profile-route" d={PROFILE} fill="none" vector-effect="non-scaling-stroke" data-route></path>
-        </svg>
-        <div class="pins" aria-hidden="true">
-          {firsts.map((_, i) => <span class="pin" data-pin={i}><span class="pin-n">0{i + 1}</span></span>)}
         </div>
 
         <ol class="firsts">
@@ -195,6 +178,7 @@ const PROFILE =
           }
         </ol>
       </div>
+      <FirstsMountain count={firsts.length} />
     </div>
   </section>
 
@@ -297,28 +281,11 @@ const PROFILE =
   const manifesto = document.querySelector<HTMLElement>('[data-manifesto]');
   const words = manifesto ? [...manifesto.querySelectorAll<HTMLElement>('.w')] : [];
   const story = document.querySelector<HTMLElement>('[data-story]');
-  const route = story?.querySelector<SVGPathElement>('[data-route]') ?? null;
   const pins = story ? [...story.querySelectorAll<HTMLElement>('[data-pin]')] : [];
   const items = story ? [...story.querySelectorAll<HTMLElement>('[data-first]')] : [];
   const STOPS = [0.2, 0.45, 0.68, 0.92];
 
   if (story && !reduced) story.classList.add('is-pinned');
-
-  // Put the checkpoints on the route line.
-  let routeLen = 0;
-  const placePins = () => {
-    if (!route) return;
-    routeLen = route.getTotalLength();
-    const svg = route.ownerSVGElement!;
-    const host = story!.querySelector<HTMLElement>('.story-inner')!.getBoundingClientRect();
-    const box = svg.getBoundingClientRect();
-    pins.forEach((pin, i) => {
-      const p = route.getPointAtLength(routeLen * STOPS[i]);
-      pin.style.left = `${box.left - host.left + (p.x * box.width) / 1000}px`;
-      pin.style.top = `${box.top - host.top + (p.y * box.height) / 300}px`;
-    });
-    route.style.strokeDasharray = `${routeLen}`;
-  };
 
   let ticking = false;
   const frame = () => {
@@ -330,11 +297,11 @@ const PROFILE =
       words.forEach((w, i) => w.classList.toggle('lit', i < lit));
     }
 
-    if (story && route) {
+    if (story) {
       const pinned = story.classList.contains('is-pinned');
       const r = story.getBoundingClientRect();
       const p = pinned ? clamp(-r.top / (r.height - innerHeight)) : 1;
-      route.style.strokeDashoffset = `${routeLen * (1 - p)}`;
+      story.dispatchEvent(new CustomEvent('route-progress', { detail: p }));
       let active = 0;
       STOPS.forEach((s, i) => {
         if (p >= s - 0.05) active = i;
@@ -350,17 +317,9 @@ const PROFILE =
     }
   };
 
-  placePins();
   frame();
   addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('resize', () => {
-    placePins();
-    onScroll();
-  });
-  document.fonts?.ready.then(() => {
-    placePins();
-    frame();
-  });
+  addEventListener('resize', onScroll);
 </script>
 
 <style>
@@ -496,27 +455,6 @@ const PROFILE =
     font-size: clamp(2.6rem, 6.5vw, 5.2rem);
     max-width: 12ch;
   }
-  .profile {
-    display: block;
-    width: 100%;
-    height: clamp(120px, 24vh, 260px);
-    margin-top: 32px;
-    overflow: visible;
-  }
-  .profile-base {
-    stroke: #555;
-    stroke-width: 2;
-    stroke-dasharray: 2 7;
-  }
-  .profile-route {
-    stroke: var(--orange);
-    stroke-width: 3;
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--orange) 70%, transparent));
-  }
-  .pins {
-    display: none;
-  }
   .firsts {
     list-style: none;
     margin: 32px 0 0;
@@ -557,60 +495,23 @@ const PROFILE =
     top: 0;
     height: 100svh;
     display: flex;
-    align-items: center;
-    padding-block: 80px 32px;
+    padding-block: 96px 40px;
     overflow: hidden;
   }
-  .is-pinned .story-inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 24px 48px;
-    align-items: end;
-  }
-  .is-pinned .profile {
-    grid-column: 1 / -1;
-    margin-top: 28px;
-  }
-  .is-pinned .pins {
-    display: block;
+  /* The mountain fills the pinned screen; the words sit on top of it. */
+  .is-pinned :global(.mountain) {
     position: absolute;
     inset: 0;
+    height: auto;
+  }
+  .is-pinned .story-inner {
+    z-index: 1;
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    gap: 24px 48px;
     pointer-events: none;
-  }
-  .pin {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    translate: -50% -50%;
-    border-radius: 50%;
-    background: var(--page);
-    border: 2px solid var(--pin);
-    transition:
-      background-color 0.3s ease,
-      border-color 0.3s ease,
-      box-shadow 0.4s ease,
-      scale 0.4s var(--ease-out);
-  }
-  .pin.on {
-    background: var(--orange);
-    border-color: var(--orange);
-    box-shadow:
-      0 0 0 8px color-mix(in srgb, var(--orange) 18%, transparent),
-      0 0 28px color-mix(in srgb, var(--orange) 80%, transparent);
-    scale: 1.15;
-  }
-  .pin-n {
-    position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%;
-    translate: -50% 0;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
-    color: var(--stone-text);
-  }
-  .pin.on .pin-n {
-    color: var(--orange);
   }
   .is-pinned .firsts {
     grid-row: 1;
@@ -629,17 +530,22 @@ const PROFILE =
     opacity: 1;
     transform: none;
   }
+  .is-pinned .first p {
+    text-shadow: 0 1px 12px var(--page);
+  }
   @media (max-width: 760px) {
     .is-pinned .story-inner {
       grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto;
     }
     .is-pinned .firsts {
       grid-row: 3;
       grid-column: 1;
     }
-    .is-pinned .profile {
-      grid-row: 2;
-      margin-top: 36px;
+    /* Keep the mountain between the heading and the words at the bottom. */
+    .is-pinned :global(.mountain) {
+      top: 20%;
+      bottom: 26%;
     }
   }
 
