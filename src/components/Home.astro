@@ -137,7 +137,7 @@ const { manifesto, firsts, activities } = c;
       <div class="hero-foot">
         <p class="lede">{c.lede}</p>
         <div class="hero-signup">
-          <p class="label label-orange">{UI[lang].waitlist.label}</p>
+          <p class="coming-soon"><span class="dot dot-live" aria-hidden="true"></span>{UI[lang].waitlist.label}</p>
           <a class="btn" href="#waitlist">{UI[lang].getTheApp}</a>
         </div>
       </div>
@@ -400,8 +400,21 @@ const { manifesto, firsts, activities } = c;
   }
   .hero-signup {
     display: grid;
-    gap: 12px;
+    gap: 14px;
     justify-items: start;
+  }
+  /* The one line that says the app isn't out yet: clear, with the same live
+     dot as "iPhone · In development" further down. */
+  .coming-soon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ice);
+    text-shadow: 0 1px 12px rgb(0 0 0 / 0.7);
   }
   @media (max-width: 760px) {
     .hero {
