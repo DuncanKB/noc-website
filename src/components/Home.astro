@@ -23,7 +23,6 @@ const COPY = {
       'NEVERMADE OUTDOOR CLUB (NOC) is an outdoor app and community for chasing your firsts: first summit, first trail run, first sunrise hike, first night outside. Not about being the fastest.',
     motto: ['Do the things', 'you haven’t', 'done yet.'],
     lede: 'An outdoor app and community for chasing your firsts: the summit you’ve never stood on, the trail you’ve never run, the night you’ve never spent outside.',
-    discord: 'Or join the Discord',
     ideaAria: 'What NOC is',
     idea: '(01) The idea',
     manifesto:
@@ -71,7 +70,6 @@ const COPY = {
       'NEVERMADE OUTDOOR CLUB (NOC) is een outdoor-app en community voor je eerste keren: je eerste top, eerste trailrun, eerste zonsopgangtocht, eerste nacht buiten. Niet om wie het snelst is.',
     motto: ['Doe wat je', 'nog nooit', 'hebt gedaan.'],
     lede: 'Een outdoor-app en community voor je eerste keren: de top waar je nooit op stond, het pad dat je nooit liep, de nacht die je nooit buiten doorbracht.',
-    discord: 'Of kom in de Discord',
     ideaAria: 'Wat NOC is',
     idea: '(01) Het idee',
     manifesto:
@@ -141,7 +139,6 @@ const { manifesto, firsts, activities } = c;
         <div class="hero-signup">
           <p class="label label-orange">{UI[lang].waitlist.label}</p>
           <a class="btn" href="#waitlist">{UI[lang].getTheApp}</a>
-          <a class="quiet-link" href={DISCORD} rel="noopener">{c.discord} <span aria-hidden="true">↗</span></a>
         </div>
       </div>
     </div>
@@ -405,17 +402,6 @@ const { manifesto, firsts, activities } = c;
     display: grid;
     gap: 12px;
     justify-items: start;
-  }
-  .quiet-link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    color: var(--stone-text);
-    font-weight: 500;
-    text-underline-offset: 4px;
-  }
-  .quiet-link:hover {
-    color: var(--ice);
   }
   @media (max-width: 760px) {
     .hero {
