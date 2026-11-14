@@ -46,8 +46,8 @@ export const APP_SCREENS: AppScreen[] = [
     title: 'Go',
     caption: { en: 'Choose your activity and go', nl: 'Kies je activiteit en ga' },
     alt: {
-      en: 'The Go screen: choose Walk, Run, Hike or Ride to start recording an outing.',
-      nl: 'Het Go-scherm: kies Walk, Run, Hike of Ride om een tocht op te nemen.',
+      en: 'The Go screen: choose Walk, Run, Hike, Cycle, Gravel or Mountain bike to start recording an outing.',
+      nl: 'Het Go-scherm: kies Walk, Run, Hike, Cycle, Gravel of Mountain bike om een tocht op te nemen.',
     },
   },
   {
