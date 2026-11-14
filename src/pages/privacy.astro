@@ -7,7 +7,7 @@ import { CONTACT_EMAIL } from '../links';
 import Base from '../layouts/Base.astro';
 import Section from '../components/PolicySection.astro';
 
-const UPDATED = '14 November 2026'; // added: your month outside, the language choice; share as image shows the whole route by default (section 06)
+const UPDATED = '14 November 2026'; // added: the rough area of an outing and outings near you (section 06); your month outside, the language choice
 const CONTACT = CONTACT_EMAIL;
 ---
 
@@ -119,8 +119,11 @@ const CONTACT = CONTACT_EMAIL;
           </li>
           <li>
             <strong>When you plan or join an outing</strong> (Go together), other NEVERMADE members can see it: what,
-            when, the meeting point you typed, the route if you picked one, your name and who else is going. People who
-            blocked each other don't see each other's outings. A cancelled outing is no longer shown, and everything
+            when, the meeting point you typed, the route if you picked one, your name and who else is going, and the
+            rough area of the outing (rounded to about 1 km: the route's start, a town you typed, or where you were when
+            you planned it), so members nearby can find it. To show outings near you, the app uses your own position
+            rounded the same way; it is only used for that search and not saved. People who blocked each other don't see
+            each other's outings. A cancelled outing is no longer shown, and everything
             goes when you delete your account.
           </li>
           <li>
