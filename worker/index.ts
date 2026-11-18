@@ -4,9 +4,14 @@
 //  - POST /api/waitlist: stores an email address for the app-launch email, and
 //    (when the DISCORD_WEBHOOK secret is set) posts "new sign-up, N on the list"
 //    to a private Discord channel. The address itself never goes to Discord.
+//  - A welcome email to each NEW address (worker/welcome-email.ts), sent
+//    through Resend when the RESEND_API_KEY secret is set; without it, none.
 //  - GET /api/waitlist/count: how many are on the list, a number only (for the
 //    counter at the waitlist), cached for 5 minutes.
 // Export or delete the list: npm run waitlist:export / npm run waitlist:delete (scripts/waitlist.mjs).
+
+import { CONTACT_EMAIL } from '../src/links';
+import { welcomeEmail } from './welcome-email';
 
 // Just the bits of Cloudflare's D1 API this file uses.
 interface D1Database {
@@ -24,6 +29,7 @@ interface Env {
   ASSETS: { fetch: (req: Request) => Promise<Response> };
   DB: D1Database;
   DISCORD_WEBHOOK?: string; // set with: npx wrangler secret put DISCORD_WEBHOOK
+  RESEND_API_KEY?: string; // set with: npx wrangler secret put RESEND_API_KEY (a Resend key with sending access)
 }
 
 const APEX = 'nevermadeoutdoorclub.com';
@@ -112,6 +118,8 @@ async function waitlist(request: Request, env: Env, url: URL, ctx: ExecutionCont
     // Only new addresses ping Discord; the answer doesn't wait for it.
     const isNew = Boolean(result.meta?.changes);
     if (isNew && env.DISCORD_WEBHOOK) ctx.waitUntil(ping(env));
+    // Only a new address gets the welcome; signing up again sends nothing.
+    if (isNew && env.RESEND_API_KEY) ctx.waitUntil(welcome(env, email, back === '/nl' ? 'nl' : 'en'));
     else console.log('waitlist: no ping', { isNew, webhookSet: Boolean(env.DISCORD_WEBHOOK) });
   } catch (err) {
     console.error('waitlist insert failed', err);
@@ -132,6 +140,30 @@ async function count(env: Env): Promise<Response> {
   } catch (err) {
     console.error('waitlist count failed', err);
     return secure(Response.json({ count: null }, { status: 503 }), '/api/waitlist/count');
+  }
+}
+
+// The welcome email, through Resend's API. Failures are logged without the
+// address; the sign-up itself already succeeded.
+async function welcome(env: Env, to: string, lang: 'en' | 'nl'): Promise<void> {
+  try {
+    const mail = welcomeEmail(lang, CONTACT_EMAIL);
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        from: 'NEVERMADE OUTDOOR CLUB <hello@nevermadeoutdoorclub.com>',
+        to: [to],
+        reply_to: CONTACT_EMAIL,
+        subject: mail.subject,
+        html: mail.html,
+        text: mail.text,
+      }),
+    });
+    if (res.ok) console.log('welcome email sent', { lang });
+    else console.error('welcome email failed', { status: res.status, body: (await res.text()).slice(0, 200) });
+  } catch (err) {
+    console.error('welcome email failed', err);
   }
 }
 
