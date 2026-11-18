@@ -4,6 +4,8 @@
 //  - POST /api/waitlist: stores an email address for the app-launch email, and
 //    (when the DISCORD_WEBHOOK secret is set) posts "new sign-up, N on the list"
 //    to a private Discord channel. The address itself never goes to Discord.
+//  - GET /api/waitlist/count: how many are on the list, a number only (for the
+//    counter at the waitlist), cached for 5 minutes.
 // Export or delete the list: npm run waitlist:export / npm run waitlist:delete (scripts/waitlist.mjs).
 
 // Just the bits of Cloudflare's D1 API this file uses.
@@ -34,6 +36,11 @@ export default {
     if (url.hostname === APEX) {
       url.hostname = `www.${APEX}`;
       return Response.redirect(url.toString(), 301);
+    }
+
+    if (url.pathname === '/api/waitlist/count') {
+      if (request.method !== 'GET') return new Response('Method not allowed', { status: 405, headers: { allow: 'GET' } });
+      return count(env);
     }
 
     if (url.pathname === '/api/waitlist') {
@@ -111,6 +118,21 @@ async function waitlist(request: Request, env: Env, url: URL, ctx: ExecutionCont
     return reply(500, 'error');
   }
   return reply(200, 'ok');
+}
+
+// The number on the list, nothing else. Cached briefly so a busy page doesn't
+// ask the database on every visit.
+async function count(env: Env): Promise<Response> {
+  try {
+    const row = await env.DB.prepare('SELECT COUNT(*) AS n FROM waitlist').first<{ n: number }>();
+    return secure(
+      Response.json({ count: row?.n ?? 0 }, { headers: { 'cache-control': 'public, max-age=300' } }),
+      '/api/waitlist/count',
+    );
+  } catch (err) {
+    console.error('waitlist count failed', err);
+    return secure(Response.json({ count: null }, { status: 503 }), '/api/waitlist/count');
+  }
 }
 
 // "New waitlist sign-up: 23 on the list." No address, nothing else.

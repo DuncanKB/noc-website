@@ -56,7 +56,16 @@ const COPY = {
     appPlus: 'Later: NOC+, an optional membership with extras. The details aren’t final yet.',
     statusAria: 'Release status',
     status: ['In development', 'Later', 'Planned'],
-    joinLabel: '(05) Join the club',
+    roadLabel: '(05) Where NOC is going',
+    roadTitle: 'More than an app.',
+    roadLede: 'NOC starts with an app, but it’s meant to be a club: people who go outside to do something for the first time, and do it together. This is where we’re heading. No dates yet.',
+    road: [
+      { when: 'Now', name: 'The app', line: 'Record your outings, collect your firsts, find routes and plan outings together.' },
+      { when: 'Next', name: 'Events', line: 'Group rides, hikes and runs, planned in the app and on Discord. Open to everyone.' },
+      { when: 'Later', name: 'Clothing', line: 'Gear with the club badge, made for being outside. Small drops, made to order.' },
+      { when: 'One day', name: 'The club', line: 'Trips, meetups and a place where firsts are celebrated. Built with the people on board.' },
+    ],
+    joinLabel: '(06) Join the club',
     join: ['Come along', 'before the', 'app does.'],
     joinLede: 'Leave your email and you’re among the first in when the iPhone app opens.',
     joinMeanwhile: 'Until then, swap plans and find people to go with:',
@@ -103,7 +112,16 @@ const COPY = {
     appPlus: 'Later: NOC+, een optioneel lidmaatschap met extra’s. De details staan nog niet vast.',
     statusAria: 'Status van de release',
     status: ['In ontwikkeling', 'Later', 'Gepland'],
-    joinLabel: '(05) Word lid',
+    roadLabel: '(05) Waar NOC naartoe gaat',
+    roadTitle: 'Meer dan een app.',
+    roadLede: 'NOC begint met een app, maar is bedoeld als club: mensen die naar buiten gaan om iets voor het eerst te doen, en dat samen doen. Hier gaan we naartoe. Nog zonder data.',
+    road: [
+      { when: 'Nu', name: 'De app', line: 'Leg je tochten vast, verzamel je eerste keren, vind routes en plan samen tochten.' },
+      { when: 'Hierna', name: 'Events', line: 'Samen fietsen, hiken en hardlopen, gepland in de app en op Discord. Voor iedereen.' },
+      { when: 'Later', name: 'Kleding', line: 'Spullen met de clubbadge, gemaakt om buiten te zijn. Kleine series, op bestelling.' },
+      { when: 'Ooit', name: 'De club', line: 'Trips, meetups en een plek waar eerste keren gevierd worden. Samen met wie er al bij is.' },
+    ],
+    joinLabel: '(06) Word lid',
     join: ['Kom mee', 'voordat de', 'app er is.'],
     joinLede: 'Laat je e-mailadres achter en je bent er als een van de eersten bij als de iPhone-app opengaat.',
     joinMeanwhile: 'Tot die tijd: wissel plannen uit en vind mensen om mee op pad te gaan:',
@@ -229,6 +247,29 @@ const { manifesto, firsts, activities } = c;
       </div>
 
       <div class="app-visual"><AppShowcase lang={lang} /></div>
+    </div>
+  </section>
+
+  <!-- Where NOC is going -->
+  <section id="road" class="road" aria-labelledby="road-title">
+    <div class="wrap">
+      <p class="label label-orange">{c.roadLabel}</p>
+      <h2 id="road-title" class="section-title">{c.roadTitle}</h2>
+      <p class="road-lede">{c.roadLede}</p>
+      <ol class="road-list">
+        {
+          c.road.map((step, i) => (
+            <li class={i === 0 ? 'road-step is-now' : 'road-step'}>
+              <span class="label road-when">
+                <span class={i === 0 ? 'dot dot-live' : 'dot'} aria-hidden="true" />
+                {step.when}
+              </span>
+              <h3 class="road-name">{step.name}</h3>
+              <p class="road-line">{step.line}</p>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
@@ -646,6 +687,63 @@ const { manifesto, firsts, activities } = c;
     }
     .act-line {
       grid-column: 2;
+    }
+  }
+
+  /* Where NOC is going: four steps, now → one day, side by side on wide screens. */
+  .road {
+    padding-block: clamp(80px, 12vw, 160px);
+    border-top: 1px solid var(--line);
+  }
+  .road-lede {
+    max-width: 40rem;
+    margin-top: 20px;
+    color: var(--stone-text);
+    font-size: 1.1rem;
+    line-height: 1.55;
+  }
+  .road-list {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+  }
+  .road-step {
+    padding: 28px 20px 8px 0;
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+  .road-step + .road-step {
+    padding-left: 20px;
+    border-left: 1px solid var(--line);
+  }
+  .road-when {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .road-name {
+    font-size: clamp(2rem, 3.6vw, 3rem);
+  }
+  .is-now .road-name {
+    color: var(--orange);
+  }
+  .road-line {
+    color: var(--stone-text);
+    line-height: 1.5;
+  }
+  @media (max-width: 860px) {
+    .road-list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .road-step,
+    .road-step + .road-step {
+      padding: 22px 0;
+      border-left: 0;
+      border-bottom: 1px solid var(--line);
     }
   }
 

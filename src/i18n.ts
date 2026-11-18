@@ -42,6 +42,10 @@ export const UI = {
       error: 'Something went wrong. Please try again in a minute.',
       offline: 'No connection. Please try again.',
       note: 'One email when the app launches, nothing else. We only keep your address for that, never share or sell it, and delete it on request:',
+      testers: 'The first 50 on the list test the app before anyone else.',
+      count: '{n} people are on the list',
+      spots: '{n} of 50 tester spots left',
+      full: 'The tester spots are taken. Join for launch.',
     },
     showcase: {
       carousel: 'Screens from the NOC app. Use the arrow keys to move between them.',
@@ -76,6 +80,10 @@ export const UI = {
       error: 'Er ging iets mis. Probeer het over een minuut opnieuw.',
       offline: 'Geen verbinding. Probeer het opnieuw.',
       note: 'Eén e-mail als de app uitkomt, verder niets. We bewaren je adres alleen daarvoor, delen of verkopen het nooit en verwijderen het op verzoek:',
+      testers: 'De eerste 50 op de lijst testen de app voor iedereen.',
+      count: '{n} mensen staan op de lijst',
+      spots: 'Nog {n} van de 50 testplekken',
+      full: 'De testplekken zijn vergeven. Meld je aan voor de lancering.',
     },
     showcase: {
       carousel: 'Schermen uit de NOC-app. Gebruik de pijltjestoetsen om te wisselen.',

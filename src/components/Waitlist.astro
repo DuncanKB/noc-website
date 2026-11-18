@@ -29,9 +29,15 @@ const t = UI[lang].waitlist;
   data-invalid={t.invalid}
   data-error={t.error}
   data-offline={t.offline}
+  data-count={t.count}
+  data-spots={t.spots}
+  data-full={t.full}
   novalidate
 >
   <p class="label label-orange wl-kicker">{t.label}</p>
+  <p class="wl-testers">{t.testers}</p>
+  <!-- Filled in by the script below from /api/waitlist/count; hidden until there are enough people to show. -->
+  <p class="wl-count" data-counter hidden></p>
   <label class="sr-only" for={`${id}-email`}>{t.email}</label>
   <!-- Where to come back to after a no-JavaScript submit. -->
   <input type="hidden" name="from" value={HOME[lang]} />
@@ -64,6 +70,42 @@ const t = UI[lang].waitlist;
 </form>
 
 <script>
+  // The counter: how many are on the list, and how many of the 50 tester spots
+  // are left. Only shown from MIN_SHOWN people, so it never reads "3 people".
+  const MIN_SHOWN = 10;
+  const SPOTS = 50;
+  async function fillCounters() {
+    let n: number | null = null;
+    // In development (astro dev has no Worker): ?count=148 shows what it would look like.
+    const fake = import.meta.env.DEV ? Number(new URLSearchParams(location.search).get('count')) : NaN;
+    if (Number.isFinite(fake) && fake > 0) n = fake;
+    else {
+      try {
+        const res = await fetch('/api/waitlist/count', { headers: { accept: 'application/json' } });
+        if (res.ok) n = ((await res.json()) as { count?: number | null }).count ?? null;
+      } catch {
+        // No counter then.
+      }
+    }
+    if (n == null || n < MIN_SHOWN) return;
+    for (const form of document.querySelectorAll<HTMLFormElement>('[data-waitlist]')) {
+      const el = form.querySelector<HTMLElement>('[data-counter]');
+      if (!el) continue;
+      const count = (form.dataset.count ?? '').replace('{n}', n.toLocaleString(document.documentElement.lang || 'en'));
+      const left = SPOTS - n;
+      const spots = left > 0 ? (form.dataset.spots ?? '').replace('{n}', String(left)) : form.dataset.full ?? '';
+      el.innerHTML = '';
+      const dot = document.createElement('span');
+      dot.className = 'wl-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      const strong = document.createElement('strong');
+      strong.textContent = count;
+      el.append(dot, strong, document.createTextNode(` · ${spots}`));
+      el.hidden = false;
+    }
+  }
+  void fillCounters();
+
   for (const form of document.querySelectorAll<HTMLFormElement>('[data-waitlist]')) {
     const msg = form.querySelector<HTMLElement>('.wl-msg');
     const button = form.querySelector<HTMLButtonElement>('button');
@@ -138,6 +180,54 @@ const t = UI[lang].waitlist;
 <style>
   .wl-kicker {
     margin: 0;
+  }
+  .wl-testers {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    color: var(--ice);
+  }
+  /* The counter: a live dot, the number in bold, the tester spots left. */
+  .wl-count {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    margin: 0;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--stone-text);
+  }
+  .wl-count[hidden] {
+    display: none;
+  }
+  .wl-count :global(strong) {
+    color: var(--ice);
+    font-weight: 500;
+  }
+  .wl-count :global(.wl-dot) {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--moss);
+    animation: wl-pulse 2.4s ease-out infinite;
+  }
+  @keyframes wl-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 60%, transparent);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 10px color-mix(in srgb, var(--moss) 0%, transparent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wl-count :global(.wl-dot) {
+      animation: none;
+    }
   }
   .waitlist {
     /* Room under the sticky header when a link jumps here. */
